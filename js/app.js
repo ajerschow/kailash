@@ -18,6 +18,7 @@
 
     buildStatsBar();
     buildMap();
+    document.dispatchEvent(new CustomEvent("kora-data-ready", { detail: DATA }));
 
     // Chart layout depends on the panel's real flexbox-resolved size, which
     // isn't available on the first synchronous layout pass — redraw whenever
@@ -362,6 +363,7 @@
 
     cursorMarker.setLatLng([p.lat, p.lon]);
     if (panMap) map.panTo([p.lat, p.lon]);
+    if (window.__kora3d) window.__kora3d.setCursor(p);
 
     const grade = instantGrade(idx);
     document.getElementById("readout-dist").textContent = `${p.dist.toFixed(2)} km`;

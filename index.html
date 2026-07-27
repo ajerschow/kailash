@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kailash Kora — Interactive Trail Map</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -17,7 +18,19 @@
   </header>
 
   <main>
-    <section id="map"></section>
+    <section id="map-wrap">
+      <div id="map"></div>
+      <div id="map3d"></div>
+      <div class="view-toggle" id="view-toggle">
+        <button type="button" class="view-btn active" data-view="2d">2D Map</button>
+        <button type="button" class="view-btn" data-view="3d">3D Terrain</button>
+      </div>
+      <div class="exaggeration-control" id="exaggeration-control" hidden>
+        <label for="exaggeration-slider">Vertical exaggeration <span id="exaggeration-val">1.0×</span></label>
+        <input type="range" id="exaggeration-slider" min="1" max="3" step="0.1" value="1">
+        <p class="hint">Right-click (or ctrl+) drag to rotate/tilt &middot; scroll to zoom &middot; left-drag to pan</p>
+      </div>
+    </section>
 
     <section id="profile-panel">
       <div class="profile-header">
@@ -37,10 +50,13 @@
       Trail geometry: <a href="https://www.openstreetmap.org/relation/1661963" target="_blank" rel="noopener">OpenStreetMap relation 1661963 "Kailash Kora"</a> (community-surveyed outer kora route), © OpenStreetMap contributors, ODbL.
       Elevation: SRTM 30&nbsp;m via <a href="https://www.opentopodata.org/" target="_blank" rel="noopener">opentopodata.org</a>, lightly smoothed.
       Map tiles: <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA) / Esri World Imagery.
+      3D terrain: <a href="https://github.com/tilezen/joerd" target="_blank" rel="noopener">Mapzen/Tilezen Joerd</a> elevation tiles (SRTM/ASTER-derived), rendered with <a href="https://maplibre.org" target="_blank" rel="noopener">MapLibre GL</a>.
     </p>
   </footer>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/terrain3d.js"></script>
 </body>
 </html>
