@@ -12,8 +12,13 @@
   const CURSOR_SRC = "kora-cursor";
   const LOOKAHEAD_KM = 0.1;
   const FULL_LOOP_SECONDS = 120;
-  const WALK_ZOOM = 13.5;
-  const WALK_PITCH = 68;
+  // View-angle slider (0-100) interpolates between these two, both verified
+  // to render cleanly everywhere on the loop, including the steep switchbacks
+  // at Dolma La — MapLibre has no minimum-altitude camera API, so pushing
+  // past the "ground-level" end starts clipping through terrain.
+  const WALK_ZOOM_MIN = 12, WALK_ZOOM_MAX = 15;
+  const WALK_PITCH_MIN = 55, WALK_PITCH_MAX = 78;
+  const WALK_ANGLE_DEFAULT = 55;
 
   document.addEventListener("kora-data-ready", (e) => {
     DATA = e.detail;
@@ -31,6 +36,7 @@
   const walkSpeedSel = document.getElementById("walk-speed");
   const walkDistLabel = document.getElementById("walk-dist-label");
   const walkPlaceLabel = document.getElementById("walk-place-label");
+  const walkAngleSlider = document.getElementById("walk-angle-slider");
   const resetViewBtn = document.getElementById("reset-view-btn");
 
   toggle.addEventListener("click", (e) => {
@@ -77,6 +83,7 @@
     } else if (currentView === "walk") {
       stopWalk();
       walkSlider.value = 0;
+      walkAngleSlider.value = WALK_ANGLE_DEFAULT;
       updateWalkCamera(0);
     }
   });
@@ -287,6 +294,10 @@
     updateWalkCamera(parseFloat(walkSlider.value));
   });
 
+  walkAngleSlider.addEventListener("input", () => {
+    updateWalkCamera(parseFloat(walkSlider.value));
+  });
+
   walkPlayBtn.addEventListener("click", () => {
     if (walkPlaying) stopWalk(); else startWalk();
   });
@@ -334,9 +345,12 @@
     // way to pin the camera to an exact eye-level altitude without it
     // clipping through steep terrain (verified: near-90 pitch + tight zoom
     // renders a blank frame around Dolma La and even occasionally on flatter
-    // ground). This close-in, moderately tilted framing is the most
-    // ground-hugging view that stays reliable across the whole loop.
-    map3d.jumpTo({ center: [p.lon, p.lat], zoom: WALK_ZOOM, pitch: WALK_PITCH, bearing });
+    // ground). Zoom and pitch move together along a range that stays
+    // reliable everywhere on the loop; the angle slider picks a point on it.
+    const angleT = parseFloat(walkAngleSlider.value) / 100;
+    const zoom = WALK_ZOOM_MIN + angleT * (WALK_ZOOM_MAX - WALK_ZOOM_MIN);
+    const pitch = WALK_PITCH_MIN + angleT * (WALK_PITCH_MAX - WALK_PITCH_MIN);
+    map3d.jumpTo({ center: [p.lon, p.lat], zoom, pitch, bearing });
 
     walkDistLabel.textContent = `${p.dist.toFixed(2)} km`;
     walkPlaceLabel.textContent = nearestPlaceLabel(p.dist);

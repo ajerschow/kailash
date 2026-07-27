@@ -273,6 +273,23 @@ main {
 #walk-dist-label { color: var(--accent-2); }
 #walk-place-label { color: var(--text); font-weight: 600; }
 
+.walk-angle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.walk-angle-row input[type="range"] {
+  flex: 1;
+}
+
+.walk-angle-label {
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
 .walk-control .hint {
   margin: 6px 0 0;
   font-style: italic;
