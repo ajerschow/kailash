@@ -46,6 +46,20 @@
   const walkPlaceLabel = document.getElementById("walk-place-label");
   const walkAngleSlider = document.getElementById("walk-angle-slider");
   const resetViewBtn = document.getElementById("reset-view-btn");
+  const exagCollapseBtn = document.getElementById("exag-collapse-btn");
+  const walkCollapseBtn = document.getElementById("walk-collapse-btn");
+
+  initCollapseToggle(exagCtrl, exagCollapseBtn);
+  initCollapseToggle(walkCtrl, walkCollapseBtn);
+
+  function initCollapseToggle(panel, btn) {
+    btn.addEventListener("click", () => {
+      const collapsed = panel.classList.toggle("collapsed");
+      btn.textContent = collapsed ? "+" : "−";
+      btn.setAttribute("aria-expanded", String(!collapsed));
+      btn.setAttribute("aria-label", collapsed ? "Expand controls" : "Collapse controls");
+    });
+  }
 
   toggle.addEventListener("click", (e) => {
     const btn = e.target.closest(".view-btn");

@@ -10,7 +10,25 @@
   let chartDims = null; // {w,h,padL,padR,padT,padB}
   let distArr = [];
 
+  initInfoToggle();
   init();
+
+  // ---------- collapsible stats + elevation profile ----------
+
+  function initInfoToggle() {
+    const btn = document.getElementById("info-toggle-btn");
+    const label = document.getElementById("info-toggle-label");
+    const statsBarEl = document.getElementById("stats-bar");
+    const profilePanelEl = document.getElementById("profile-panel");
+    let expanded = false;
+    btn.addEventListener("click", () => {
+      expanded = !expanded;
+      statsBarEl.classList.toggle("collapsible-hidden", !expanded);
+      profilePanelEl.classList.toggle("collapsible-hidden", !expanded);
+      btn.setAttribute("aria-expanded", String(expanded));
+      label.textContent = expanded ? "Hide stats & elevation" : "Show stats & elevation";
+    });
+  }
 
   async function init() {
     // Loaded from data/kora-data.js (a plain <script> assigning
@@ -362,13 +380,18 @@
   function moveCursorToDist(dist, panMap) {
     const idx = nearestIndexByDist(dist);
     const p = DATA.trail[idx];
-    const x = chartDims.xScale(p.dist);
-    const y = chartDims.yScale(p.ele);
-    highlightLine.style.display = "";
-    highlightLine._line.setAttribute("x1", x);
-    highlightLine._line.setAttribute("x2", x);
-    highlightLine._dot.setAttribute("cx", x);
-    highlightLine._dot.setAttribute("cy", y);
+
+    // The elevation panel starts collapsed, so the chart (and its
+    // crosshair) may not have been built yet — only touch it once it has.
+    if (chartDims && highlightLine) {
+      const x = chartDims.xScale(p.dist);
+      const y = chartDims.yScale(p.ele);
+      highlightLine.style.display = "";
+      highlightLine._line.setAttribute("x1", x);
+      highlightLine._line.setAttribute("x2", x);
+      highlightLine._dot.setAttribute("cx", x);
+      highlightLine._dot.setAttribute("cy", y);
+    }
 
     cursorMarker.setLatLng([p.lat, p.lon]);
     if (panMap) map.panTo([p.lat, p.lon]);

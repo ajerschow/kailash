@@ -14,8 +14,12 @@
       <h1>Kailash Kora</h1>
       <p class="subtitle">The sacred circumambulation of Mount Kailash, Tibet — real trail geometry &amp; topography</p>
     </div>
-    <div class="stats-bar" id="stats-bar"><!-- filled by JS --></div>
+    <button type="button" id="info-toggle-btn" class="info-toggle-btn" aria-expanded="false">
+      <span id="info-toggle-label">Show stats &amp; elevation</span><span class="chevron" aria-hidden="true">▾</span>
+    </button>
   </header>
+
+  <div class="stats-bar collapsible-hidden" id="stats-bar"><!-- filled by JS --></div>
 
   <main>
     <section id="map-wrap">
@@ -28,37 +32,47 @@
         <button type="button" class="reset-btn" id="reset-view-btn" title="Reset to default view" aria-label="Reset view">⟲</button>
       </div>
       <div class="exaggeration-control" id="exaggeration-control" hidden>
-        <label for="exaggeration-slider">Vertical exaggeration <span id="exaggeration-val">1.0×</span></label>
-        <input type="range" id="exaggeration-slider" min="1" max="3" step="0.1" value="1">
-        <p class="hint">Right-click (or ctrl+) drag to rotate/tilt &middot; scroll to zoom &middot; left-drag to pan</p>
+        <div class="panel-head">
+          <label for="exaggeration-slider">Vert. exaggeration <span id="exaggeration-val">1.0×</span></label>
+          <button type="button" class="collapse-btn" id="exag-collapse-btn" aria-label="Collapse controls" aria-expanded="true">−</button>
+        </div>
+        <div class="panel-body" id="exag-body">
+          <input type="range" id="exaggeration-slider" min="1" max="3" step="0.1" value="1">
+          <p class="hint">Right-click (or ctrl+) drag to rotate/tilt &middot; scroll to zoom &middot; left-drag to pan</p>
+        </div>
       </div>
       <div class="walk-control" id="walk-control" hidden>
-        <div class="walk-row">
-          <button type="button" id="walk-step-back-btn" class="walk-step-btn" aria-label="Step back" title="Step back">⏮</button>
-          <button type="button" id="walk-play-btn" class="walk-play-btn" aria-label="Play">▶</button>
-          <button type="button" id="walk-step-fwd-btn" class="walk-step-btn" aria-label="Step forward" title="Step forward">⏭</button>
-          <input type="range" id="walk-slider" min="0" max="47" step="0.001" value="0">
-          <select id="walk-speed" aria-label="Playback speed">
-            <option value="0.5">0.5×</option>
-            <option value="1" selected>1×</option>
-            <option value="2">2×</option>
-            <option value="4">4×</option>
-          </select>
+        <div class="panel-head">
+          <span class="panel-readout">
+            <span id="walk-dist-label">0.00 km</span>
+            <span id="walk-place-label"></span>
+          </span>
+          <button type="button" class="collapse-btn" id="walk-collapse-btn" aria-label="Collapse controls" aria-expanded="true">−</button>
         </div>
-        <div class="walk-readout">
-          <span id="walk-dist-label">0.00 km</span>
-          <span id="walk-place-label"></span>
+        <div class="panel-body" id="walk-body">
+          <div class="walk-row">
+            <button type="button" id="walk-step-back-btn" class="walk-step-btn" aria-label="Step back" title="Step back">⏮</button>
+            <button type="button" id="walk-play-btn" class="walk-play-btn" aria-label="Play">▶</button>
+            <button type="button" id="walk-step-fwd-btn" class="walk-step-btn" aria-label="Step forward" title="Step forward">⏭</button>
+            <input type="range" id="walk-slider" min="0" max="47" step="0.001" value="0">
+            <select id="walk-speed" aria-label="Playback speed">
+              <option value="0.5">0.5×</option>
+              <option value="1" selected>1×</option>
+              <option value="2">2×</option>
+              <option value="4">4×</option>
+            </select>
+          </div>
+          <div class="walk-angle-row">
+            <span class="walk-angle-label">Elevated</span>
+            <input type="range" id="walk-angle-slider" min="0" max="100" step="1" value="55" aria-label="View angle, elevated to ground-level">
+            <span class="walk-angle-label">Ground-level</span>
+          </div>
+          <p class="hint">First-person run-through, on the real terrain &middot; drag the slider or press play</p>
         </div>
-        <div class="walk-angle-row">
-          <span class="walk-angle-label">Elevated</span>
-          <input type="range" id="walk-angle-slider" min="0" max="100" step="1" value="55" aria-label="View angle, elevated to ground-level">
-          <span class="walk-angle-label">Ground-level</span>
-        </div>
-        <p class="hint">First-person run-through, on the real terrain &middot; drag the slider or press play</p>
       </div>
     </section>
 
-    <section id="profile-panel">
+    <section id="profile-panel" class="collapsible-hidden">
       <div class="profile-header">
         <h2>Elevation Profile</h2>
         <div class="profile-readout" id="readout">
