@@ -254,20 +254,22 @@
     pendingWalkEnter = false;
     savedExaggeration = currentExaggeration;
     if (map3d.getTerrain()) map3d.setTerrain({ source: "terrain-dem", exaggeration: 1 });
-    disableInteractions();
-    if (navControl) map3d.removeControl(navControl);
     updateWalkCamera(parseFloat(walkSlider.value) || 0);
+    // Starts paused: leave drag/rotate/zoom enabled so the user can look
+    // around from that spot. They get locked out only while playback is
+    // actively driving the camera (see startWalk/stopWalk).
   }
 
   function exitWalkMode() {
     stopWalk();
     enableInteractions();
-    if (navControl) map3d.addControl(navControl, "top-right");
     if (map3d && map3d.getTerrain()) {
       map3d.setTerrain({ source: "terrain-dem", exaggeration: savedExaggeration });
     }
     if (map3d) fitToTrail();
   }
+
+  let navControlAdded = true;
 
   function disableInteractions() {
     map3d.dragPan.disable();
@@ -277,6 +279,10 @@
     map3d.touchZoomRotate.disable();
     map3d.touchPitch.disable();
     map3d.keyboard.disable();
+    if (navControl && navControlAdded) {
+      map3d.removeControl(navControl);
+      navControlAdded = false;
+    }
   }
 
   function enableInteractions() {
@@ -287,6 +293,10 @@
     map3d.touchZoomRotate.enable();
     map3d.touchPitch.enable();
     map3d.keyboard.enable();
+    if (navControl && !navControlAdded) {
+      map3d.addControl(navControl, "top-right");
+      navControlAdded = true;
+    }
   }
 
   walkSlider.addEventListener("input", () => {
@@ -306,6 +316,7 @@
     if (!mapReady) return;
     walkPlaying = true;
     walkPlayBtn.textContent = "⏸";
+    disableInteractions();
     lastFrameTime = null;
     walkAnimId = requestAnimationFrame(walkTick);
   }
@@ -315,6 +326,7 @@
     walkPlayBtn.textContent = "▶";
     if (walkAnimId) cancelAnimationFrame(walkAnimId);
     walkAnimId = null;
+    if (map3d && currentView === "walk") enableInteractions();
   }
 
   function walkTick(now) {
