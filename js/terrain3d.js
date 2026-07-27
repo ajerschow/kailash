@@ -1,33 +1,67 @@
 (() => {
   let DATA = null;
+  let distArr = [];
   let map3d = null;
+  let navControl = null;
   let initialized = false;
+  let mapReady = false;
+  let pendingWalkEnter = false;
   let currentExaggeration = 1;
+  let savedExaggeration = 1;
+  let currentView = "2d";
   const CURSOR_SRC = "kora-cursor";
+  const LOOKAHEAD_KM = 0.1;
+  const FULL_LOOP_SECONDS = 120;
+  const WALK_ZOOM = 13.5;
+  const WALK_PITCH = 68;
 
-  document.addEventListener("kora-data-ready", (e) => { DATA = e.detail; });
+  document.addEventListener("kora-data-ready", (e) => {
+    DATA = e.detail;
+    distArr = DATA.trail.map(p => p.dist);
+  });
 
   const wrap = document.getElementById("map-wrap");
   const toggle = document.getElementById("view-toggle");
   const exagCtrl = document.getElementById("exaggeration-control");
   const exagSlider = document.getElementById("exaggeration-slider");
   const exagVal = document.getElementById("exaggeration-val");
+  const walkCtrl = document.getElementById("walk-control");
+  const walkSlider = document.getElementById("walk-slider");
+  const walkPlayBtn = document.getElementById("walk-play-btn");
+  const walkSpeedSel = document.getElementById("walk-speed");
+  const walkDistLabel = document.getElementById("walk-dist-label");
+  const walkPlaceLabel = document.getElementById("walk-place-label");
 
   toggle.addEventListener("click", (e) => {
     const btn = e.target.closest(".view-btn");
     if (!btn) return;
     const view = btn.dataset.view;
+    if (view === currentView) return;
     toggle.querySelectorAll(".view-btn").forEach(b => b.classList.toggle("active", b === btn));
 
-    if (view === "3d") {
+    if (currentView === "walk") exitWalkMode();
+
+    if (view === "2d") {
+      wrap.classList.remove("mode-3d", "mode-walk");
+      exagCtrl.hidden = true;
+      walkCtrl.hidden = true;
+    } else {
       wrap.classList.add("mode-3d");
-      exagCtrl.hidden = false;
       if (!initialized) initMap3D();
       else map3d.resize();
-    } else {
-      wrap.classList.remove("mode-3d");
-      exagCtrl.hidden = true;
+
+      if (view === "3d") {
+        wrap.classList.remove("mode-walk");
+        exagCtrl.hidden = false;
+        walkCtrl.hidden = true;
+      } else if (view === "walk") {
+        wrap.classList.add("mode-walk");
+        exagCtrl.hidden = true;
+        walkCtrl.hidden = false;
+        enterWalkMode();
+      }
     }
+    currentView = view;
   });
 
   exagSlider.addEventListener("input", () => {
@@ -86,7 +120,8 @@
       attributionControl: false
     });
 
-    map3d.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
+    navControl = new maplibregl.NavigationControl({ visualizePitch: true });
+    map3d.addControl(navControl, "top-right");
     map3d.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
 
     map3d.on("load", () => {
@@ -95,6 +130,9 @@
       addWaypointLayer();
       addCursorLayer();
       fitToTrail();
+      mapReady = true;
+      walkSlider.max = DATA.stats.total_distance_km.toFixed(2);
+      if (pendingWalkEnter) enterWalkMode();
     });
 
     window.__kora3dMap = map3d;
@@ -176,6 +214,147 @@
     const lats = DATA.trail.map(p => p.lat), lons = DATA.trail.map(p => p.lon);
     const bounds = [[Math.min(...lons), Math.min(...lats)], [Math.max(...lons), Math.max(...lats)]];
     map3d.fitBounds(bounds, { padding: 60, pitch: 60, bearing: -20, duration: 0 });
+  }
+
+  // ---------- first-person walkthrough ----------
+
+  let walkPlaying = false;
+  let walkAnimId = null;
+  let lastFrameTime = null;
+
+  function enterWalkMode() {
+    if (!map3d || !mapReady) {
+      pendingWalkEnter = true;
+      return;
+    }
+    pendingWalkEnter = false;
+    savedExaggeration = currentExaggeration;
+    if (map3d.getTerrain()) map3d.setTerrain({ source: "terrain-dem", exaggeration: 1 });
+    disableInteractions();
+    if (navControl) map3d.removeControl(navControl);
+    updateWalkCamera(parseFloat(walkSlider.value) || 0);
+  }
+
+  function exitWalkMode() {
+    stopWalk();
+    enableInteractions();
+    if (navControl) map3d.addControl(navControl, "top-right");
+    if (map3d && map3d.getTerrain()) {
+      map3d.setTerrain({ source: "terrain-dem", exaggeration: savedExaggeration });
+    }
+    if (map3d) fitToTrail();
+  }
+
+  function disableInteractions() {
+    map3d.dragPan.disable();
+    map3d.dragRotate.disable();
+    map3d.scrollZoom.disable();
+    map3d.doubleClickZoom.disable();
+    map3d.touchZoomRotate.disable();
+    map3d.touchPitch.disable();
+    map3d.keyboard.disable();
+  }
+
+  function enableInteractions() {
+    map3d.dragPan.enable();
+    map3d.dragRotate.enable();
+    map3d.scrollZoom.enable();
+    map3d.doubleClickZoom.enable();
+    map3d.touchZoomRotate.enable();
+    map3d.touchPitch.enable();
+    map3d.keyboard.enable();
+  }
+
+  walkSlider.addEventListener("input", () => {
+    stopWalk();
+    updateWalkCamera(parseFloat(walkSlider.value));
+  });
+
+  walkPlayBtn.addEventListener("click", () => {
+    if (walkPlaying) stopWalk(); else startWalk();
+  });
+
+  function startWalk() {
+    if (!mapReady) return;
+    walkPlaying = true;
+    walkPlayBtn.textContent = "⏸";
+    lastFrameTime = null;
+    walkAnimId = requestAnimationFrame(walkTick);
+  }
+
+  function stopWalk() {
+    walkPlaying = false;
+    walkPlayBtn.textContent = "▶";
+    if (walkAnimId) cancelAnimationFrame(walkAnimId);
+    walkAnimId = null;
+  }
+
+  function walkTick(now) {
+    if (!walkPlaying) return;
+    if (lastFrameTime == null) lastFrameTime = now;
+    const dt = (now - lastFrameTime) / 1000;
+    lastFrameTime = now;
+    const total = DATA.stats.total_distance_km;
+    const speed = parseFloat(walkSpeedSel.value) || 1;
+    const kmPerSec = (total / FULL_LOOP_SECONDS) * speed;
+    let d = parseFloat(walkSlider.value) + kmPerSec * dt;
+    if (d > total) d -= total;
+    walkSlider.value = d.toFixed(3);
+    updateWalkCamera(d);
+    walkAnimId = requestAnimationFrame(walkTick);
+  }
+
+  function updateWalkCamera(distKm) {
+    const idx = nearestIndexByDist(distKm);
+    const p = DATA.trail[idx];
+    const total = DATA.stats.total_distance_km;
+    let targetDist = p.dist + LOOKAHEAD_KM;
+    if (targetDist > total) targetDist -= total;
+    const t = DATA.trail[nearestIndexByDist(targetDist)];
+
+    const bearing = bearingBetween(p.lat, p.lon, t.lat, t.lon);
+    // MapLibre GL has no FreeCameraOptions (Mapbox-only API), so there's no
+    // way to pin the camera to an exact eye-level altitude without it
+    // clipping through steep terrain (verified: near-90 pitch + tight zoom
+    // renders a blank frame around Dolma La and even occasionally on flatter
+    // ground). This close-in, moderately tilted framing is the most
+    // ground-hugging view that stays reliable across the whole loop.
+    map3d.jumpTo({ center: [p.lon, p.lat], zoom: WALK_ZOOM, pitch: WALK_PITCH, bearing });
+
+    walkDistLabel.textContent = `${p.dist.toFixed(2)} km`;
+    walkPlaceLabel.textContent = nearestPlaceLabel(p.dist);
+
+    if (window.__kora3d) window.__kora3d.setCursor(p);
+    if (window.__koraApp) window.__koraApp.moveCursorToDist(p.dist, false);
+  }
+
+  function nearestPlaceLabel(distKm) {
+    let best = null, bestD = Infinity;
+    DATA.waypoints.forEach(wp => {
+      if (wp.trail_dist_km == null) return;
+      const d = Math.abs(wp.trail_dist_km - distKm);
+      if (d < bestD) { bestD = d; best = wp; }
+    });
+    if (!best) return "";
+    return bestD < 0.5 ? `At ${best.name}` : `${bestD.toFixed(1)} km from ${best.name}`;
+  }
+
+  function nearestIndexByDist(dist) {
+    let lo = 0, hi = distArr.length - 1;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (distArr[mid] < dist) lo = mid + 1; else hi = mid;
+    }
+    return lo;
+  }
+
+  function bearingBetween(lat1, lon1, lat2, lon2) {
+    const toRad = d => (d * Math.PI) / 180;
+    const toDeg = r => (r * 180) / Math.PI;
+    const phi1 = toRad(lat1), phi2 = toRad(lat2), dLon = toRad(lon2 - lon1);
+    const y = Math.sin(dLon) * Math.cos(phi2);
+    const x = Math.cos(phi1) * Math.sin(phi2) - Math.sin(phi1) * Math.cos(phi2) * Math.cos(dLon);
+    return (toDeg(Math.atan2(y, x)) + 360) % 360;
   }
 
   function elevationColor(t) {

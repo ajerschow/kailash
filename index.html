@@ -24,11 +24,29 @@
       <div class="view-toggle" id="view-toggle">
         <button type="button" class="view-btn active" data-view="2d">2D Map</button>
         <button type="button" class="view-btn" data-view="3d">3D Terrain</button>
+        <button type="button" class="view-btn" data-view="walk">Walk-through</button>
       </div>
       <div class="exaggeration-control" id="exaggeration-control" hidden>
         <label for="exaggeration-slider">Vertical exaggeration <span id="exaggeration-val">1.0×</span></label>
         <input type="range" id="exaggeration-slider" min="1" max="3" step="0.1" value="1">
         <p class="hint">Right-click (or ctrl+) drag to rotate/tilt &middot; scroll to zoom &middot; left-drag to pan</p>
+      </div>
+      <div class="walk-control" id="walk-control" hidden>
+        <div class="walk-row">
+          <button type="button" id="walk-play-btn" class="walk-play-btn" aria-label="Play">▶</button>
+          <input type="range" id="walk-slider" min="0" max="47" step="0.01" value="0">
+          <select id="walk-speed" aria-label="Playback speed">
+            <option value="0.5">0.5×</option>
+            <option value="1" selected>1×</option>
+            <option value="2">2×</option>
+            <option value="4">4×</option>
+          </select>
+        </div>
+        <div class="walk-readout">
+          <span id="walk-dist-label">0.00 km</span>
+          <span id="walk-place-label"></span>
+        </div>
+        <p class="hint">First-person run-through, eye level on the real terrain &middot; drag the slider or press play</p>
       </div>
     </section>
 

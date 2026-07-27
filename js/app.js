@@ -18,6 +18,7 @@
 
     buildStatsBar();
     buildMap();
+    window.__koraApp = { moveCursorToDist };
     document.dispatchEvent(new CustomEvent("kora-data-ready", { detail: DATA }));
 
     // Chart layout depends on the panel's real flexbox-resolved size, which
