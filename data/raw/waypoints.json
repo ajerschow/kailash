@@ -1,0 +1,74 @@
+[
+ {
+  "name": "Darchen",
+  "lat": 30.9779175,
+  "lon": 81.2857037,
+  "desc": "Starting/ending town of the kora (trailhead at Tarboche nearby)",
+  "trail_dist_km": 27.94,
+  "offset_from_trail_m": 28.8,
+  "trail_ele": 4684.0
+ },
+ {
+  "name": "Chuku Gompa",
+  "lat": 31.0333511,
+  "lon": 81.266478,
+  "desc": "First monastery, day 1, west side",
+  "trail_dist_km": 35.75,
+  "offset_from_trail_m": 432.4,
+  "trail_ele": 4736.0
+ },
+ {
+  "name": "Driraphuk Gompa",
+  "lat": 31.1075736,
+  "lon": 81.320996,
+  "desc": "North-face monastery, day 1 overnight stop, closest point to Kailash north face",
+  "trail_dist_km": 46.3,
+  "offset_from_trail_m": 611.9,
+  "trail_ele": 5075.0
+ },
+ {
+  "name": "Serdung Chuksum",
+  "lat": 31.0582418,
+  "lon": 81.3132477,
+  "desc": "\"Thirteen Golden Chortens\" pass, ele 5860m",
+  "trail_dist_km": null,
+  "offset_from_trail_m": 3000.7,
+  "trail_ele": 4802.0
+ },
+ {
+  "name": "Khandro Sanglam La",
+  "lat": 31.0770672,
+  "lon": 81.349554,
+  "desc": "Dakini secret pass, near start of Dolma La ascent",
+  "trail_dist_km": null,
+  "offset_from_trail_m": 2037.9,
+  "trail_ele": 5356.0
+ },
+ {
+  "name": "Dolma La",
+  "lat": 31.0950171,
+  "lon": 81.370359,
+  "desc": "Highest point of the kora, ele ~5650m",
+  "trail_dist_km": 5.12,
+  "offset_from_trail_m": 0.0,
+  "trail_ele": 5642.0
+ },
+ {
+  "name": "Zuthrul Phug Gompa",
+  "lat": 31.0021754,
+  "lon": 81.3621947,
+  "desc": "Day 2 overnight stop, \"Cave of Miracles\" monastery",
+  "trail_dist_km": 17.67,
+  "offset_from_trail_m": 131.5,
+  "trail_ele": 4802.0
+ },
+ {
+  "name": "Mount Kailash summit",
+  "lat": 31.0678394,
+  "lon": 81.3119303,
+  "desc": "Sacred peak, ele 6638m (reference point, not on trail)",
+  "trail_dist_km": null,
+  "offset_from_trail_m": 2802.3,
+  "trail_ele": 4823.0
+ }
+]

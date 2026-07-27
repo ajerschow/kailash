@@ -1,0 +1,221 @@
+:root {
+  --bg: #0f1620;
+  --panel: #16202c;
+  --panel-alt: #1c2836;
+  --border: #2a3a4a;
+  --text: #e7eef4;
+  --text-dim: #9db0c0;
+  --accent: #e8a33d;
+  --accent-2: #6fb8d9;
+  --low: #4f9d6e;
+  --high: #c85a4c;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f4f1ea;
+    --panel: #ffffff;
+    --panel-alt: #f0ede4;
+    --border: #ddd6c7;
+    --text: #23292f;
+    --text-dim: #5b6670;
+    --accent: #b5711a;
+    --accent-2: #1f7a9c;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+a { color: var(--accent-2); }
+
+.app-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 22px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+
+.title-block h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  letter-spacing: 0.02em;
+}
+
+.subtitle {
+  margin: 2px 0 0;
+  font-size: 0.82rem;
+  color: var(--text-dim);
+}
+
+.stats-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.stat {
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  text-align: center;
+  min-width: 78px;
+}
+
+.stat .val {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.stat .lab {
+  display: block;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#map {
+  flex: 1 1 60%;
+  min-height: 320px;
+  position: relative;
+}
+
+#profile-panel {
+  flex: 0 0 auto;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+  padding: 10px 18px 14px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.profile-header h2 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.profile-readout {
+  display: flex;
+  gap: 14px;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+}
+
+.profile-readout span {
+  min-width: 70px;
+}
+
+#readout-dist { color: var(--accent-2); }
+#readout-ele { color: var(--accent); }
+#readout-grade { color: var(--text-dim); }
+
+#elevation-chart {
+  width: 100%;
+  height: 190px;
+  display: block;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+/* leaflet popup theming */
+.leaflet-popup-content-wrapper {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.leaflet-popup-tip { background: var(--panel); }
+.leaflet-popup-content { margin: 10px 12px; font-family: var(--font); }
+.leaflet-popup-content h3 { margin: 0 0 4px; font-size: 0.95rem; }
+.leaflet-popup-content p { margin: 0; font-size: 0.8rem; color: var(--text-dim); }
+.leaflet-popup-content .ele-badge {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.75rem;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.wp-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 2px solid var(--accent);
+  font-size: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+.cursor-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent-2);
+  border: 2px solid white;
+  box-shadow: 0 0 6px rgba(0,0,0,0.6);
+}
+
+.app-footer {
+  padding: 8px 22px 10px;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+.app-footer p { margin: 0; }
+
+@media (min-width: 900px) {
+  main { flex-direction: row; }
+  #map { flex: 1 1 62%; min-height: unset; }
+  #profile-panel {
+    flex: 0 0 38%;
+    border-top: none;
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+  }
+  #elevation-chart { flex: 1; height: auto; min-height: 260px; }
+}

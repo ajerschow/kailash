@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kailash Kora — Interactive Trail Map</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="title-block">
+      <h1>Kailash Kora</h1>
+      <p class="subtitle">The sacred circumambulation of Mount Kailash, Tibet — real trail geometry &amp; topography</p>
+    </div>
+    <div class="stats-bar" id="stats-bar"><!-- filled by JS --></div>
+  </header>
+
+  <main>
+    <section id="map"></section>
+
+    <section id="profile-panel">
+      <div class="profile-header">
+        <h2>Elevation Profile</h2>
+        <div class="profile-readout" id="readout">
+          <span id="readout-dist">—</span>
+          <span id="readout-ele">—</span>
+          <span id="readout-grade">—</span>
+        </div>
+      </div>
+      <svg id="elevation-chart" preserveAspectRatio="none"></svg>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>
+      Trail geometry: <a href="https://www.openstreetmap.org/relation/1661963" target="_blank" rel="noopener">OpenStreetMap relation 1661963 "Kailash Kora"</a> (community-surveyed outer kora route), © OpenStreetMap contributors, ODbL.
+      Elevation: SRTM 30&nbsp;m via <a href="https://www.opentopodata.org/" target="_blank" rel="noopener">opentopodata.org</a>, lightly smoothed.
+      Map tiles: <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA) / Esri World Imagery.
+    </p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

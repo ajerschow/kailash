@@ -1,0 +1,490 @@
+[
+ {
+  "id": 250954728,
+  "lat": 31.0678394,
+  "lon": 81.3119303,
+  "name": "Mount Kailash",
+  "ele": "6638",
+  "type": "peak"
+ },
+ {
+  "id": 1360166164,
+  "lat": 31.0641835,
+  "lon": 81.2609553,
+  "name": "Tara",
+  "ele": "5936",
+  "type": "peak"
+ },
+ {
+  "id": 1360166820,
+  "lat": 31.0962335,
+  "lon": 81.2732291,
+  "name": "Gesar Ling",
+  "ele": "5698",
+  "type": "peak"
+ },
+ {
+  "id": 1360166833,
+  "lat": 31.0745495,
+  "lon": 81.261878,
+  "name": "Amitayus",
+  "ele": "6010",
+  "type": "peak"
+ },
+ {
+  "id": 1360166949,
+  "lat": 31.0950171,
+  "lon": 81.370359,
+  "name": "Dolma Pass",
+  "ele": "5650",
+  "type": "saddle"
+ },
+ {
+  "id": 1360217888,
+  "lat": 31.0021754,
+  "lon": 81.3621947,
+  "name": "Zuthrul Phug Gompa",
+  "ele": null,
+  "type": "place_of_worship"
+ },
+ {
+  "id": 1360226221,
+  "lat": 31.1075736,
+  "lon": 81.320996,
+  "name": "Driraphuk Gompa",
+  "ele": null,
+  "type": "place_of_worship"
+ },
+ {
+  "id": 1360255611,
+  "lat": 31.0069317,
+  "lon": 81.2975047,
+  "name": "Gyangdrak Gompa",
+  "ele": null,
+  "type": "place_of_worship"
+ },
+ {
+  "id": 1360273943,
+  "lat": 31.010337,
+  "lon": 81.2782178,
+  "name": "Selung Gompa",
+  "ele": null,
+  "type": "place_of_worship"
+ },
+ {
+  "id": 2272385733,
+  "lat": 31.0770672,
+  "lon": 81.349554,
+  "name": "Khandro Sanglam La",
+  "ele": "5700",
+  "type": "yes"
+ },
+ {
+  "id": 2272385805,
+  "lat": 31.0582418,
+  "lon": 81.3132477,
+  "name": "Serdung Chuksum",
+  "ele": "5860",
+  "type": "saddle"
+ },
+ {
+  "id": 2272385837,
+  "lat": 31.0894716,
+  "lon": 81.2673712,
+  "name": "Vidschaya",
+  "ele": "5938",
+  "type": "peak"
+ },
+ {
+  "id": 2272385862,
+  "lat": 31.0548779,
+  "lon": 81.3124248,
+  "name": "Nandi",
+  "ele": "6002",
+  "type": "peak"
+ },
+ {
+  "id": 2839029082,
+  "lat": 30.9940461,
+  "lon": 81.2585881,
+  "name": "Marnyi Stone",
+  "ele": null,
+  "type": null
+ },
+ {
+  "id": 2839179067,
+  "lat": 31.0737811,
+  "lon": 81.2825959,
+  "name": "Praying Flag",
+  "ele": null,
+  "type": null
+ },
+ {
+  "id": 2876696636,
+  "lat": 31.0838209,
+  "lon": 81.3401449,
+  "name": "Jampelyang",
+  "ele": "5835",
+  "type": "peak"
+ },
+ {
+  "id": 3017753890,
+  "lat": 30.9779175,
+  "lon": 81.2857037,
+  "name": "Parga",
+  "ele": null,
+  "type": "town"
+ },
+ {
+  "id": 3116631995,
+  "lat": 31.0812757,
+  "lon": 81.4161801,
+  "name": "Sonam Ri",
+  "ele": "6034",
+  "type": "peak"
+ },
+ {
+  "id": 4047096670,
+  "lat": 31.0616745,
+  "lon": 81.3342386,
+  "name": "Dharama King Norsang",
+  "ele": "5996",
+  "type": "peak"
+ },
+ {
+  "id": 4047096671,
+  "lat": 31.0640273,
+  "lon": 81.2942684,
+  "name": "Guru Rinpoche Torma",
+  "ele": "5656",
+  "type": "peak"
+ },
+ {
+  "id": 4047096688,
+  "lat": 31.086899,
+  "lon": 81.3088488,
+  "name": "Chana Dorje",
+  "ele": "5750",
+  "type": "peak"
+ },
+ {
+  "id": 4047096724,
+  "lat": 31.0886425,
+  "lon": 81.3640259,
+  "name": "Sharma Ri",
+  "ele": "6008",
+  "type": "peak"
+ },
+ {
+  "id": 4047096730,
+  "lat": 31.0929812,
+  "lon": 81.3247275,
+  "name": "Cheneresi",
+  "ele": "5675",
+  "type": "peak"
+ },
+ {
+  "id": 4345708890,
+  "lat": 30.9537994,
+  "lon": 81.2866492,
+  "name": "世界中心",
+  "ele": null,
+  "type": "hotel"
+ },
+ {
+  "id": 4346734490,
+  "lat": 30.9701651,
+  "lon": 81.2865982,
+  "name": "Himalaya Kailash hotel",
+  "ele": null,
+  "type": "hotel"
+ },
+ {
+  "id": 4349688814,
+  "lat": 31.0018457,
+  "lon": 81.363727,
+  "name": "Monastery's restaurant",
+  "ele": null,
+  "type": "restaurant"
+ },
+ {
+  "id": 4349688938,
+  "lat": 31.0849423,
+  "lon": 81.3831064,
+  "name": "Buddha's hand",
+  "ele": null,
+  "type": "attraction"
+ },
+ {
+  "id": 4349692695,
+  "lat": 31.0013547,
+  "lon": 81.363291,
+  "name": "Monastery guest house",
+  "ele": null,
+  "type": "hostel"
+ },
+ {
+  "id": 4352129489,
+  "lat": 30.9709023,
+  "lon": 81.3289258,
+  "name": "Buddha's footprint",
+  "ele": null,
+  "type": "attraction"
+ },
+ {
+  "id": 5042068521,
+  "lat": 31.089869,
+  "lon": 81.3177871,
+  "name": "North Face Lookout of Mount Kailas",
+  "ele": null,
+  "type": "viewpoint"
+ },
+ {
+  "id": 5065803314,
+  "lat": 30.9578669,
+  "lon": 81.31733,
+  "name": "Trungto",
+  "ele": null,
+  "type": "hamlet"
+ },
+ {
+  "id": 5596091224,
+  "lat": 30.9778253,
+  "lon": 81.2844805,
+  "name": "Porter and Yak Services",
+  "ele": null,
+  "type": null
+ },
+ {
+  "id": 6002506785,
+  "lat": 30.97388,
+  "lon": 81.2863132,
+  "name": "Foreign Certified Guesthouse",
+  "ele": null,
+  "type": "guest_house"
+ },
+ {
+  "id": 6003831886,
+  "lat": 30.9733668,
+  "lon": 81.2862377,
+  "name": "Yokohama Restaurant",
+  "ele": null,
+  "type": "restaurant"
+ },
+ {
+  "id": 6047264149,
+  "lat": 31.0344012,
+  "lon": 81.3767783,
+  "name": "Zuthrul Phug Guesthouse",
+  "ele": null,
+  "type": null
+ },
+ {
+  "id": 6047453101,
+  "lat": 31.1066867,
+  "lon": 81.32105,
+  "name": "Driraphuk Gompa Guesthouse",
+  "ele": null,
+  "type": "restaurant"
+ },
+ {
+  "id": 6451229985,
+  "lat": 31.0799396,
+  "lon": 81.3863313,
+  "name": "Milarepa's footprint",
+  "ele": null,
+  "type": "attraction"
+ },
+ {
+  "id": 6451515485,
+  "lat": 31.0166349,
+  "lon": 81.3771795,
+  "name": "The headprint of 16th Gyalwa Karmapa",
+  "ele": null,
+  "type": "attraction"
+ },
+ {
+  "id": 6477925685,
+  "lat": 30.9701519,
+  "lon": 81.2860905,
+  "name": "Chong Qing Restaurant+",
+  "ele": null,
+  "type": "restaurant"
+ },
+ {
+  "id": 7944130158,
+  "lat": 31.0597989,
+  "lon": 81.3118397,
+  "name": "十三金塔",
+  "ele": null,
+  "type": "place_of_worship"
+ },
+ {
+  "id": 9082184022,
+  "lat": 31.1791131,
+  "lon": 81.4214871,
+  "name": "Tshesti Lachen La",
+  "ele": null,
+  "type": "saddle"
+ },
+ {
+  "id": 9595118793,
+  "lat": 31.1029491,
+  "lon": 81.3198459,
+  "name": "Zhira pug goin ba",
+  "ele": null,
+  "type": "locality"
+ },
+ {
+  "id": 9595154464,
+  "lat": 30.9734697,
+  "lon": 81.293512,
+  "name": "Ticket Check",
+  "ele": null,
+  "type": null
+ },
+ {
+  "id": 9597177882,
+  "lat": 30.9782967,
+  "lon": 81.2835771,
+  "name": "Kailash Kora Ticket Office",
+  "ele": null,
+  "type": null
+ },
+ {
+  "id": 12818964219,
+  "lat": 31.0149531,
+  "lon": 81.2617206,
+  "name": "经幡广场",
+  "ele": null,
+  "type": "square"
+ },
+ {
+  "id": 12854494401,
+  "lat": 30.9777571,
+  "lon": 81.3346982,
+  "name": "Dakini dancing place",
+  "ele": null,
+  "type": "attraction"
+ },
+ {
+  "id": 12903788393,
+  "lat": 30.9757459,
+  "lon": 81.2856356,
+  "name": "Kangsa",
+  "ele": null,
+  "type": "village"
+ },
+ {
+  "id": 12903904742,
+  "lat": 30.9718045,
+  "lon": 81.2835943,
+  "name": "普兰县中心医院巴嘎镇分院",
+  "ele": null,
+  "type": "hospital"
+ },
+ {
+  "id": 12903904743,
+  "lat": 30.974208,
+  "lon": 81.2846303,
+  "name": "西藏普兰县巴嘎小学",
+  "ele": null,
+  "type": "school"
+ },
+ {
+  "id": 12904036639,
+  "lat": 30.9417976,
+  "lon": 81.2913031,
+  "name": "1314观景餐厅",
+  "ele": null,
+  "type": "restaurant"
+ },
+ {
+  "id": 12904042323,
+  "lat": 30.9419046,
+  "lon": 81.2915716,
+  "name": "冈仁波齐转山服务接待中心",
+  "ele": null,
+  "type": "information"
+ },
+ {
+  "id": 12904042324,
+  "lat": 30.9416319,
+  "lon": 81.2918421,
+  "name": "冈仁波齐峰2号营地",
+  "ele": null,
+  "type": null
+ },
+ {
+  "id": 12904044990,
+  "lat": 31.014984,
+  "lon": 81.2611369,
+  "name": "冈仁波齐",
+  "ele": null,
+  "type": null
+ },
+ {
+  "id": 12904064919,
+  "lat": 30.9533972,
+  "lon": 81.2864175,
+  "name": "神山圣水",
+  "ele": null,
+  "type": "artwork"
+ },
+ {
+  "id": 12905484077,
+  "lat": 31.0120228,
+  "lon": 81.2596456,
+  "name": "色雄",
+  "ele": null,
+  "type": "isolated_dwelling"
+ },
+ {
+  "id": 12905524811,
+  "lat": 31.084888,
+  "lon": 81.2869862,
+  "name": "旦真仲康 རྟ་མགྲིན་འགྲོན་ཁང་།",
+  "ele": null,
+  "type": "isolated_dwelling"
+ },
+ {
+  "id": 13324917551,
+  "lat": 30.9534859,
+  "lon": 81.2826443,
+  "name": "藏地苍穹·冈仁波齐店",
+  "ele": null,
+  "type": "hotel"
+ },
+ {
+  "id": 13724726640,
+  "lat": 31.0333511,
+  "lon": 81.266478,
+  "name": "Chuku Gompa",
+  "ele": null,
+  "type": "place_of_worship"
+ },
+ {
+  "id": 13900181301,
+  "lat": 30.9705216,
+  "lon": 81.2837201,
+  "name": "Shanshui hotel (Mount&Water)",
+  "ele": null,
+  "type": "hotel"
+ },
+ {
+  "id": 13900181401,
+  "lat": 30.9754055,
+  "lon": 81.2870863,
+  "name": "Russian restaurant",
+  "ele": null,
+  "type": "cafe"
+ },
+ {
+  "id": 13985058601,
+  "lat": 30.9745562,
+  "lon": 81.2864916,
+  "name": "Kora Starting Point Hotel",
+  "ele": null,
+  "type": "hotel"
+ }
+]
