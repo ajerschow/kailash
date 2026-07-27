@@ -13,8 +13,11 @@
   init();
 
   async function init() {
-    const res = await fetch("data/kora.json");
-    DATA = await res.json();
+    // Loaded from data/kora-data.js (a plain <script> assigning
+    // window.KORA_DATA) rather than fetch()'d, so the page also works when
+    // opened directly as a file:// URL, where fetch() of local files is
+    // blocked by browsers.
+    DATA = window.KORA_DATA;
     distArr = DATA.trail.map(p => p.dist);
 
     buildStatsBar();
