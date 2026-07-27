@@ -20,10 +20,16 @@
   const WALK_PITCH_MIN = 55, WALK_PITCH_MAX = 82;
   const WALK_ANGLE_DEFAULT = 55;
 
-  document.addEventListener("kora-data-ready", (e) => {
-    DATA = e.detail;
+  function setData(d) {
+    DATA = d;
     distArr = DATA.trail.map(p => p.dist);
-  });
+  }
+  // app.js dispatches this synchronously now that data loads from an inline
+  // <script> instead of fetch(), so it can fire before this script (loaded
+  // after app.js) has even registered a listener — check for data that's
+  // already there first, and only fall back to the event if it isn't yet.
+  if (window.KORA_DATA) setData(window.KORA_DATA);
+  else document.addEventListener("kora-data-ready", (e) => setData(e.detail));
 
   const wrap = document.getElementById("map-wrap");
   const toggle = document.getElementById("view-toggle");
