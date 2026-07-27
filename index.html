@@ -34,8 +34,10 @@
       </div>
       <div class="walk-control" id="walk-control" hidden>
         <div class="walk-row">
+          <button type="button" id="walk-step-back-btn" class="walk-step-btn" aria-label="Step back" title="Step back">⏮</button>
           <button type="button" id="walk-play-btn" class="walk-play-btn" aria-label="Play">▶</button>
-          <input type="range" id="walk-slider" min="0" max="47" step="0.01" value="0">
+          <button type="button" id="walk-step-fwd-btn" class="walk-step-btn" aria-label="Step forward" title="Step forward">⏭</button>
+          <input type="range" id="walk-slider" min="0" max="47" step="0.001" value="0">
           <select id="walk-speed" aria-label="Playback speed">
             <option value="0.5">0.5×</option>
             <option value="1" selected>1×</option>

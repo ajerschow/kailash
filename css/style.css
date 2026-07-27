@@ -248,6 +248,26 @@ main {
   justify-content: center;
 }
 
+.walk-step-btn {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--panel-alt);
+  color: var(--text);
+  font-size: 0.7rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.walk-step-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .walk-row input[type="range"] {
   flex: 1;
 }

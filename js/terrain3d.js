@@ -17,7 +17,7 @@
   // at Dolma La — MapLibre has no minimum-altitude camera API, so pushing
   // past the "ground-level" end starts clipping through terrain.
   const WALK_ZOOM_MIN = 12, WALK_ZOOM_MAX = 15;
-  const WALK_PITCH_MIN = 55, WALK_PITCH_MAX = 78;
+  const WALK_PITCH_MIN = 55, WALK_PITCH_MAX = 82;
   const WALK_ANGLE_DEFAULT = 55;
 
   document.addEventListener("kora-data-ready", (e) => {
@@ -33,6 +33,8 @@
   const walkCtrl = document.getElementById("walk-control");
   const walkSlider = document.getElementById("walk-slider");
   const walkPlayBtn = document.getElementById("walk-play-btn");
+  const walkStepBackBtn = document.getElementById("walk-step-back-btn");
+  const walkStepFwdBtn = document.getElementById("walk-step-fwd-btn");
   const walkSpeedSel = document.getElementById("walk-speed");
   const walkDistLabel = document.getElementById("walk-dist-label");
   const walkPlaceLabel = document.getElementById("walk-place-label");
@@ -311,6 +313,20 @@
   walkPlayBtn.addEventListener("click", () => {
     if (walkPlaying) stopWalk(); else startWalk();
   });
+
+  walkStepBackBtn.addEventListener("click", () => stepWalk(-1));
+  walkStepFwdBtn.addEventListener("click", () => stepWalk(1));
+
+  function stepWalk(dir) {
+    if (!mapReady || !DATA) return;
+    stopWalk();
+    const idx = nearestIndexByDist(parseFloat(walkSlider.value));
+    const n = DATA.trail.length;
+    const nextIdx = (idx + dir + n) % n;
+    const dist = DATA.trail[nextIdx].dist;
+    walkSlider.value = dist;
+    updateWalkCamera(dist);
+  }
 
   function startWalk() {
     if (!mapReady) return;
