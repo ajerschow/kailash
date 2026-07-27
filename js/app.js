@@ -3,6 +3,7 @@
 
   let DATA = null;
   let map = null;
+  let mapBounds = null;
   let cursorMarker = null;
   let highlightLine = null;
   let chartEl = null;
@@ -18,7 +19,7 @@
 
     buildStatsBar();
     buildMap();
-    window.__koraApp = { moveCursorToDist };
+    window.__koraApp = { moveCursorToDist, resetView };
     document.dispatchEvent(new CustomEvent("kora-data-ready", { detail: DATA }));
 
     // Chart layout depends on the panel's real flexbox-resolved size, which
@@ -76,7 +77,7 @@
     topo.addTo(map);
     L.control.layers({ "Topographic": topo, "Satellite": satellite }, {}, { position: "topright" }).addTo(map);
 
-    const bounds = L.latLngBounds(latlngs);
+    mapBounds = L.latLngBounds(latlngs);
 
     // The map container can report zero width on first layout pass (flexbox
     // timing), which makes fitBounds pick a bogus zoom. Retry once the
@@ -87,12 +88,12 @@
       if (fitted || size.x === 0 || size.y === 0) return;
       fitted = true;
       map.invalidateSize();
-      map.fitBounds(bounds, { padding: [24, 24] });
+      map.fitBounds(mapBounds, { padding: [24, 24] });
       ro.disconnect();
     }
     const ro = new ResizeObserver(tryFit);
     ro.observe(document.getElementById("map"));
-    map.fitBounds(bounds, { padding: [24, 24] });
+    map.fitBounds(mapBounds, { padding: [24, 24] });
     tryFit();
 
     // elevation-graded polyline: draw as many short segments colored by elevation
@@ -137,6 +138,10 @@
       icon: L.divIcon({ className: "", html: '<div class="cursor-dot"></div>', iconSize: [14, 14], iconAnchor: [7, 7] }),
       interactive: false
     }).addTo(map);
+  }
+
+  function resetView() {
+    if (map && mapBounds) map.fitBounds(mapBounds, { padding: [24, 24] });
   }
 
   function wpEmoji(name) {

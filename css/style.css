@@ -154,6 +154,26 @@ main {
   color: #1a1200;
 }
 
+.reset-btn {
+  border: none;
+  border-left: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 1rem;
+  line-height: 1;
+  width: 30px;
+  margin-left: 3px;
+  padding: 6px 0 6px 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reset-btn:hover {
+  color: var(--accent);
+}
+
 .exaggeration-control {
   position: absolute;
   bottom: 12px;

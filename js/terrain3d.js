@@ -31,6 +31,7 @@
   const walkSpeedSel = document.getElementById("walk-speed");
   const walkDistLabel = document.getElementById("walk-dist-label");
   const walkPlaceLabel = document.getElementById("walk-place-label");
+  const resetViewBtn = document.getElementById("reset-view-btn");
 
   toggle.addEventListener("click", (e) => {
     const btn = e.target.closest(".view-btn");
@@ -62,6 +63,22 @@
       }
     }
     currentView = view;
+  });
+
+  resetViewBtn.addEventListener("click", () => {
+    if (currentView === "2d") {
+      if (window.__koraApp) window.__koraApp.resetView();
+    } else if (currentView === "3d") {
+      currentExaggeration = 1;
+      exagSlider.value = 1;
+      exagVal.textContent = "1.0×";
+      if (map3d && map3d.getTerrain()) map3d.setTerrain({ source: "terrain-dem", exaggeration: 1 });
+      if (map3d) fitToTrail();
+    } else if (currentView === "walk") {
+      stopWalk();
+      walkSlider.value = 0;
+      updateWalkCamera(0);
+    }
   });
 
   exagSlider.addEventListener("input", () => {
