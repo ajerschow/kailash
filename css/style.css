@@ -522,7 +522,20 @@ input[type="range"] {
     max-width: none;
   }
 
+  /* Pin to the actual visible viewport rather than #map-wrap's flow
+     position — mobile Safari's address bar and notch/dynamic-island
+     safe area can otherwise push an absolutely-positioned corner button
+     out of what's currently on screen. */
+  .menu-btn {
+    position: fixed;
+    top: max(10px, env(safe-area-inset-top));
+    left: max(10px, env(safe-area-inset-left));
+  }
+
   .menu-panel {
-    max-height: calc(100vh - 76px);
+    position: fixed;
+    top: calc(max(10px, env(safe-area-inset-top)) + 46px);
+    left: max(10px, env(safe-area-inset-left));
+    max-height: calc(100vh - max(10px, env(safe-area-inset-top)) - 66px);
   }
 }
