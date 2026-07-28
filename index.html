@@ -16,7 +16,7 @@
   </header>
 
   <main>
-    <section id="map-wrap">
+    <section id="map-wrap" class="mode-3d">
       <div id="map"></div>
       <div id="map3d"></div>
 
@@ -49,13 +49,13 @@
         <div class="menu-section">
           <div class="menu-label">View</div>
           <div class="view-toggle" id="view-toggle">
-            <button type="button" class="view-btn active" data-view="2d">2D Map</button>
-            <button type="button" class="view-btn" data-view="3d">3D Terrain</button>
+            <button type="button" class="view-btn" data-view="2d">2D Map</button>
+            <button type="button" class="view-btn active" data-view="3d">3D Terrain</button>
             <button type="button" class="view-btn" data-view="walk">Walk-through</button>
           </div>
         </div>
 
-        <div class="menu-section" id="menu-exag-section" hidden>
+        <div class="menu-section" id="menu-exag-section">
           <div class="menu-label">Vertical exaggeration <span id="exaggeration-val">1.0×</span></div>
           <input type="range" id="exaggeration-slider" min="1" max="3" step="0.1" value="1">
         </div>

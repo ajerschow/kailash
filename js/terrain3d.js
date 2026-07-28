@@ -102,12 +102,8 @@
     }
   });
 
-  toggle.addEventListener("click", (e) => {
-    const btn = e.target.closest(".view-btn");
-    if (!btn) return;
-    const view = btn.dataset.view;
-    if (view === currentView) return;
-    toggle.querySelectorAll(".view-btn").forEach(b => b.classList.toggle("active", b === btn));
+  function selectView(view) {
+    toggle.querySelectorAll(".view-btn").forEach(b => b.classList.toggle("active", b.dataset.view === view));
 
     if (currentView === "walk") exitWalkMode();
 
@@ -136,7 +132,18 @@
       }
     }
     currentView = view;
+  }
+
+  toggle.addEventListener("click", (e) => {
+    const btn = e.target.closest(".view-btn");
+    if (!btn) return;
+    const view = btn.dataset.view;
+    if (view === currentView) return;
+    selectView(view);
   });
+
+  // 3D terrain is the default landing view.
+  selectView("3d");
 
   resetViewBtn.addEventListener("click", () => {
     if (currentView === "2d") {
