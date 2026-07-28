@@ -349,6 +349,8 @@
   walkStepBackBtn.addEventListener("click", () => stepWalk(-1));
   walkStepFwdBtn.addEventListener("click", () => stepWalk(1));
 
+  const STEP_EASE = { duration: 450, easing: (t) => 1 - Math.pow(1 - t, 3) };
+
   function stepWalk(dir) {
     if (!mapReady || !DATA) return;
     stopWalk();
@@ -357,7 +359,7 @@
     const nextIdx = (idx + dir + n) % n;
     const dist = DATA.trail[nextIdx].dist;
     walkSlider.value = dist;
-    updateWalkCamera(dist, true);
+    updateWalkCamera(dist, STEP_EASE);
   }
 
   function startWalk() {
@@ -377,6 +379,14 @@
     if (map3d && currentView === "walk") enableInteractions();
   }
 
+  // Constant-speed glide, re-triggered every rAF tick during playback. Real
+  // frame intervals (8-17ms on a 60-120Hz device) are always shorter than
+  // this, so consecutive glides overlap and hand off to each other smoothly
+  // instead of jumpTo-cutting every tick — in effect a small fixed amount of
+  // lag behind the true target, imperceptible at trail speed but enough to
+  // smooth over frame-timing jitter.
+  const PLAY_EASE = { duration: 90, easing: (t) => t };
+
   function walkTick(now) {
     if (!walkPlaying) return;
     if (lastFrameTime == null) lastFrameTime = now;
@@ -388,11 +398,11 @@
     let d = parseFloat(walkSlider.value) + kmPerSec * dt;
     if (d > total) d -= total;
     walkSlider.value = d.toFixed(3);
-    updateWalkCamera(d);
+    updateWalkCamera(d, PLAY_EASE);
     walkAnimId = requestAnimationFrame(walkTick);
   }
 
-  function updateWalkCamera(distKm, animate) {
+  function updateWalkCamera(distKm, camAnim) {
     const idx = nearestIndexByDist(distKm);
     const p = DATA.trail[idx];
     const total = DATA.stats.total_distance_km;
@@ -411,11 +421,11 @@
     const zoom = WALK_ZOOM_MIN + angleT * (WALK_ZOOM_MAX - WALK_ZOOM_MIN);
     const pitch = WALK_PITCH_MIN + angleT * (WALK_PITCH_MAX - WALK_PITCH_MIN);
     const cameraOpts = { center: [p.lon, p.lat], zoom, pitch, bearing };
-    // Continuous playback and slider drags already update every frame/input
-    // event with tiny deltas — that's smooth on its own, and animating each
-    // one would make the camera lag behind the input. Only the step buttons
-    // jump a whole point at once, so only they get an eased glide.
-    if (animate) map3d.easeTo({ ...cameraOpts, duration: 450, easing: (t) => 1 - Math.pow(1 - t, 3) });
+    // camAnim is {duration, easing} to glide there, or falsy for an instant
+    // cut. Slider drags stay instant since each 'input' event already
+    // arrives in tiny steps as the user drags — animating those would just
+    // make the camera lag behind the finger/cursor.
+    if (camAnim) map3d.easeTo({ ...cameraOpts, duration: camAnim.duration, easing: camAnim.easing });
     else map3d.jumpTo(cameraOpts);
 
     walkDistLabel.textContent = `${p.dist.toFixed(2)} km`;
