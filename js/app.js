@@ -10,23 +10,19 @@
   let chartDims = null; // {w,h,padL,padR,padT,padB}
   let distArr = [];
 
-  initInfoToggle();
+  initChartToggle();
   init();
 
-  // ---------- collapsible stats + elevation profile ----------
+  // ---------- collapsible elevation profile ----------
 
-  function initInfoToggle() {
-    const btn = document.getElementById("info-toggle-btn");
-    const label = document.getElementById("info-toggle-label");
-    const statsBarEl = document.getElementById("stats-bar");
+  function initChartToggle() {
+    const btn = document.getElementById("chart-toggle-btn");
     const profilePanelEl = document.getElementById("profile-panel");
     let expanded = false;
     btn.addEventListener("click", () => {
       expanded = !expanded;
-      statsBarEl.classList.toggle("collapsible-hidden", !expanded);
       profilePanelEl.classList.toggle("collapsible-hidden", !expanded);
       btn.setAttribute("aria-expanded", String(expanded));
-      label.textContent = expanded ? "Hide stats & elevation" : "Show stats & elevation";
     });
   }
 
@@ -84,7 +80,11 @@
     // close the loop visually
     latlngs.push(latlngs[0]);
 
-    map = L.map("map", { scrollWheelZoom: true });
+    // Zoom control moves to bottom-left so the top-left corner stays clear
+    // for the menu button (top-right is already taken by the layer switcher
+    // below, and by MapLibre's nav control when in 3D/walk mode).
+    map = L.map("map", { scrollWheelZoom: true, zoomControl: false });
+    L.control.zoom({ position: "bottomleft" }).addTo(map);
 
     const topo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
       maxZoom: 17,

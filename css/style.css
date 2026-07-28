@@ -10,6 +10,8 @@
   --low: #4f9d6e;
   --high: #c85a4c;
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --panel-t: rgba(22, 32, 44, 0.82);
+  --panel-alt-t: rgba(28, 40, 54, 0.78);
 }
 
 @media (prefers-color-scheme: light) {
@@ -22,6 +24,8 @@
     --text-dim: #5b6670;
     --accent: #b5711a;
     --accent-2: #1f7a9c;
+    --panel-t: rgba(255, 255, 255, 0.85);
+    --panel-alt-t: rgba(240, 237, 228, 0.8);
   }
 }
 
@@ -50,88 +54,26 @@ a { color: var(--accent-2); }
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 14px 22px;
+  padding: 10px 22px;
   background: var(--panel);
   border-bottom: 1px solid var(--border);
 }
 
 .title-block h1 {
   margin: 0;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   letter-spacing: 0.02em;
 }
 
 .subtitle {
   margin: 2px 0 0;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   color: var(--text-dim);
 }
 
 .collapsible-hidden,
 .tap-hidden {
   display: none !important;
-}
-
-.info-toggle-btn {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--panel-alt);
-  color: var(--text-dim);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 6px 12px;
-  font-family: var(--font);
-  font-size: 0.78rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.info-toggle-btn:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
-.info-toggle-btn .chevron {
-  transition: transform 0.15s ease;
-}
-
-.info-toggle-btn[aria-expanded="true"] .chevron {
-  transform: rotate(180deg);
-}
-
-.stats-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 12px 22px;
-  background: var(--panel);
-  border-bottom: 1px solid var(--border);
-}
-
-.stat {
-  background: var(--panel-alt);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 6px 12px;
-  text-align: center;
-  min-width: 78px;
-}
-
-.stat .val {
-  display: block;
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--accent);
-}
-
-.stat .lab {
-  display: block;
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-dim);
 }
 
 main {
@@ -158,217 +100,195 @@ main {
 #map-wrap.mode-3d #map { visibility: hidden; }
 #map-wrap.mode-3d #map3d { visibility: visible; }
 
-.view-toggle {
+/* ---------- unified menu ---------- */
+
+.menu-btn {
   position: absolute;
-  top: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 500;
-  display: flex;
-  max-width: calc(100% - 24px);
-  background: var(--panel);
+  top: 10px;
+  left: 10px;
+  z-index: 600;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 3px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+  background: var(--panel-t);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: var(--text);
+  font-size: 1.15rem;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-btn.active {
+  background: var(--accent);
+  color: #1a1200;
+  border-color: var(--accent);
+}
+
+.menu-panel {
+  position: absolute;
+  top: 56px;
+  left: 10px;
+  z-index: 600;
+  width: 250px;
+  max-width: calc(100% - 20px);
+  max-height: calc(100% - 66px);
+  overflow-y: auto;
+  background: var(--panel-t);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+  padding: 10px;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.menu-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.stat {
+  background: var(--panel-alt-t);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 8px;
+  text-align: center;
+}
+
+.stat .val {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.stat .lab {
+  display: block;
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+}
+
+.menu-row-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: var(--panel-alt-t);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-family: var(--font);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.menu-row-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.menu-row-btn .chevron {
+  transition: transform 0.15s ease;
+  opacity: 0.7;
+}
+
+.menu-row-btn[aria-expanded="true"] .chevron {
+  transform: rotate(180deg);
+}
+
+.menu-section {
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.menu-section:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.menu-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.menu-label #exaggeration-val {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  text-transform: none;
+}
+
+.view-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .view-btn {
-  border: none;
-  background: transparent;
+  border: 1px solid var(--border);
+  background: var(--panel-alt-t);
   color: var(--text-dim);
   font-family: var(--font);
   font-size: 0.78rem;
   font-weight: 600;
-  padding: 6px 11px;
-  border-radius: 999px;
+  padding: 7px 10px;
+  border-radius: 8px;
   cursor: pointer;
-  white-space: nowrap;
+  text-align: left;
 }
 
 .view-btn.active {
   background: var(--accent);
   color: #1a1200;
-}
-
-.reset-btn {
-  border: none;
-  border-left: 1px solid var(--border);
-  background: transparent;
-  color: var(--text-dim);
-  font-size: 1rem;
-  line-height: 1;
-  width: 30px;
-  margin-left: 3px;
-  padding: 6px 0 6px 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.reset-btn:hover {
-  color: var(--accent);
-}
-
-.exaggeration-control,
-.walk-control {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  z-index: 500;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.25);
-  font-size: 0.7rem;
-  color: var(--text-dim);
-  width: max-content;
-  max-width: calc(100% - 20px);
-}
-
-.exaggeration-control { min-width: 170px; }
-.walk-control { min-width: 260px; }
-
-.panel-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 5px 6px 5px 10px;
-}
-
-.exaggeration-control .panel-head label {
-  display: flex;
-  gap: 6px;
-  font-size: 0.7rem;
-  white-space: nowrap;
-}
-
-.panel-readout {
-  display: flex;
-  gap: 8px;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-#walk-dist-label { color: var(--accent-2); }
-#walk-place-label { color: var(--text); font-weight: 600; }
-
-#exaggeration-val {
-  color: var(--accent);
-  font-variant-numeric: tabular-nums;
-}
-
-.collapse-btn {
-  flex: 0 0 auto;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: var(--panel-alt);
-  color: var(--text-dim);
-  font-size: 0.7rem;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-}
-
-.collapse-btn:hover {
   border-color: var(--accent);
-  color: var(--accent);
 }
 
-.panel-body {
-  padding: 0 10px 8px;
-}
-
-.collapsed .panel-body {
-  display: none;
-}
-
-.collapsed .panel-head {
-  padding-bottom: 6px;
-}
-
-.exaggeration-control input[type="range"] {
+#menu-exag-section input[type="range"],
+.menu-section select {
   width: 100%;
 }
 
-.exaggeration-control .hint,
-.walk-control .hint {
-  margin: 5px 0 0;
-  font-style: italic;
-  opacity: 0.8;
-  font-size: 0.65rem;
-}
-
-.walk-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.walk-play-btn {
-  flex: 0 0 auto;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: none;
-  background: var(--accent);
-  color: #1a1200;
-  font-size: 0.7rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.walk-step-btn {
-  flex: 0 0 auto;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: var(--panel-alt);
-  color: var(--text);
-  font-size: 0.6rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.walk-step-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.walk-row input[type="range"] {
-  flex: 1;
-  min-width: 60px;
-}
-
-#walk-speed {
-  flex: 0 0 auto;
-  background: var(--panel-alt);
+.menu-section select {
+  background: var(--panel-alt-t);
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: 6px;
+  font-size: 0.75rem;
+  padding: 4px 6px;
+}
+
+.hint {
+  margin: 0 0 8px;
+  font-style: italic;
+  opacity: 0.8;
   font-size: 0.68rem;
-  padding: 2px 3px;
 }
 
 .walk-angle-row {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-top: 5px;
 }
 
 .walk-angle-row input[type="range"] {
@@ -383,6 +303,84 @@ main {
 
 input[type="range"] {
   height: 14px;
+}
+
+/* ---------- floating walk-through controls ---------- */
+
+.walk-play-bar {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  z-index: 500;
+  max-width: 380px;
+  margin: 0 auto;
+  background: var(--panel-t);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  padding: 8px 12px;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+.walk-readout {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 5px;
+  font-variant-numeric: tabular-nums;
+}
+
+#walk-dist-label { color: var(--accent-2); }
+#walk-place-label { color: var(--text); font-weight: 600; }
+
+.walk-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.walk-play-btn {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  color: #1a1200;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.walk-step-btn {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--panel-alt-t);
+  color: var(--text);
+  font-size: 0.68rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.walk-step-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.walk-row input[type="range"] {
+  flex: 1;
+  min-width: 60px;
 }
 
 .maplibregl-popup-content {
@@ -512,39 +510,19 @@ input[type="range"] {
   #elevation-chart { flex: 1; height: auto; min-height: 260px; }
 }
 
-/* Narrow phones: the centered view-toggle pill collides with the map
-   library's own top-right corner control (Leaflet's layer switcher is up
-   to 58px wide, MapLibre's zoom/compass stack similar) once the viewport
-   gets this tight — shrink and left-align it to clear that corner instead
-   of guessing a single offset that works for both libraries. */
+/* Narrow phones: anchor the floating walk-through bar to the actual visible
+   viewport rather than #map-wrap's computed height, which mobile Safari's
+   collapsing address bar can make taller than what's currently on screen. */
 @media (max-width: 600px) {
-  .view-toggle {
-    left: 6px;
-    transform: none;
-    max-width: calc(100% - 68px);
-  }
-
-  .view-btn {
-    padding: 5px 7px;
-    font-size: 0.68rem;
-  }
-
-  .reset-btn {
-    width: 22px;
-    font-size: 0.85rem;
-  }
-
-  /* Anchor to the actual visible viewport rather than #map-wrap's computed
-     height, which mobile Safari's collapsing address bar can make taller
-     than what's currently on screen — position:fixed tracks the real
-     visible area instead of silently pushing these below the fold. */
-  .exaggeration-control,
-  .walk-control {
+  .walk-play-bar {
     position: fixed;
     left: 8px;
     right: 8px;
     bottom: max(8px, env(safe-area-inset-bottom));
-    width: auto;
     max-width: none;
+  }
+
+  .menu-panel {
+    max-height: calc(100vh - 76px);
   }
 }

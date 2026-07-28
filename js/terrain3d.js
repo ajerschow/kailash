@@ -9,6 +9,11 @@
   let currentExaggeration = 1;
   let savedExaggeration = 1;
   let currentView = "2d";
+  // Tracks whether user-driven camera interaction (native MapLibre handlers
+  // AND the custom touch-look gesture below) should respond right now —
+  // false only while walk-through playback is actively driving the camera.
+  let interactionsEnabled = true;
+  const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
   const CURSOR_SRC = "kora-cursor";
   const LOOKAHEAD_KM = 0.1;
   const FULL_LOOP_SECONDS = 120;
@@ -32,11 +37,14 @@
   else document.addEventListener("kora-data-ready", (e) => setData(e.detail));
 
   const wrap = document.getElementById("map-wrap");
+  const menuBtn = document.getElementById("menu-btn");
+  const menuPanel = document.getElementById("menu-panel");
   const toggle = document.getElementById("view-toggle");
-  const exagCtrl = document.getElementById("exaggeration-control");
+  const menuExagSection = document.getElementById("menu-exag-section");
   const exagSlider = document.getElementById("exaggeration-slider");
   const exagVal = document.getElementById("exaggeration-val");
-  const walkCtrl = document.getElementById("walk-control");
+  const menuWalkSection = document.getElementById("menu-walk-section");
+  const walkPlayBar = document.getElementById("walk-play-bar");
   const walkSlider = document.getElementById("walk-slider");
   const walkPlayBtn = document.getElementById("walk-play-btn");
   const walkStepBackBtn = document.getElementById("walk-step-back-btn");
@@ -46,20 +54,36 @@
   const walkPlaceLabel = document.getElementById("walk-place-label");
   const walkAngleSlider = document.getElementById("walk-angle-slider");
   const resetViewBtn = document.getElementById("reset-view-btn");
-  const exagCollapseBtn = document.getElementById("exag-collapse-btn");
-  const walkCollapseBtn = document.getElementById("walk-collapse-btn");
+  const rotateHint = document.getElementById("rotate-hint");
 
-  initCollapseToggle(exagCtrl, exagCollapseBtn);
-  initCollapseToggle(walkCtrl, walkCollapseBtn);
+  rotateHint.textContent = isTouchDevice
+    ? "Drag one finger on the map to look around. Pinch to zoom."
+    : "Drag to rotate, scroll to zoom.";
 
-  function initCollapseToggle(panel, btn) {
-    btn.addEventListener("click", () => {
-      const collapsed = panel.classList.toggle("collapsed");
-      btn.textContent = collapsed ? "+" : "−";
-      btn.setAttribute("aria-expanded", String(!collapsed));
-      btn.setAttribute("aria-label", collapsed ? "Expand controls" : "Collapse controls");
-    });
+  function openMenu() {
+    menuPanel.hidden = false;
+    menuBtn.setAttribute("aria-expanded", "true");
+    menuBtn.classList.add("active");
   }
+
+  function closeMenu() {
+    menuPanel.hidden = true;
+    menuBtn.setAttribute("aria-expanded", "false");
+    menuBtn.classList.remove("active");
+  }
+
+  menuBtn.addEventListener("click", () => {
+    if (menuPanel.hidden) openMenu(); else closeMenu();
+  });
+
+  // Tapping anywhere outside the open menu — including the map itself —
+  // closes it again, so it never lingers over the view once the user has
+  // picked what they needed.
+  document.addEventListener("click", (e) => {
+    if (menuPanel.hidden) return;
+    if (menuPanel.contains(e.target) || menuBtn.contains(e.target)) return;
+    closeMenu();
+  });
 
   toggle.addEventListener("click", (e) => {
     const btn = e.target.closest(".view-btn");
@@ -72,8 +96,9 @@
 
     if (view === "2d") {
       wrap.classList.remove("mode-3d", "mode-walk");
-      exagCtrl.hidden = true;
-      walkCtrl.hidden = true;
+      menuExagSection.hidden = true;
+      menuWalkSection.hidden = true;
+      walkPlayBar.hidden = true;
     } else {
       wrap.classList.add("mode-3d");
       if (!initialized) initMap3D();
@@ -81,14 +106,15 @@
 
       if (view === "3d") {
         wrap.classList.remove("mode-walk");
-        exagCtrl.hidden = false;
-        exagCtrl.classList.remove("tap-hidden");
-        walkCtrl.hidden = true;
+        menuExagSection.hidden = false;
+        menuWalkSection.hidden = true;
+        walkPlayBar.hidden = true;
       } else if (view === "walk") {
         wrap.classList.add("mode-walk");
-        exagCtrl.hidden = true;
-        walkCtrl.hidden = false;
-        walkCtrl.classList.remove("tap-hidden");
+        menuExagSection.hidden = true;
+        menuWalkSection.hidden = false;
+        walkPlayBar.hidden = false;
+        walkPlayBar.classList.remove("tap-hidden");
         enterWalkMode();
       }
     }
@@ -183,17 +209,71 @@
       if (pendingWalkEnter) enterWalkMode();
     });
 
-    // Tap the map to hide the overlay panel and see more of the view; tap
-    // again to bring it back. Skip taps that land on a waypoint marker —
-    // that already has its own popup behavior.
+    // Tap the map to hide the walk-through bar and see more of the view;
+    // tap again to bring it back. Skip taps that land on a waypoint marker
+    // — that already has its own popup behavior. (An open menu is closed
+    // by the document-level click listener above, which this bubbles to.)
     map3d.on("click", (e) => {
       const hits = map3d.queryRenderedFeatures(e.point, { layers: ["kora-waypoints-circle"] });
       if (hits.length) return;
-      if (currentView === "walk") walkCtrl.classList.toggle("tap-hidden");
-      else if (currentView === "3d") exagCtrl.classList.toggle("tap-hidden");
+      if (currentView === "walk") walkPlayBar.classList.toggle("tap-hidden");
     });
 
+    setupTouchLook();
+
     window.__kora3dMap = map3d;
+  }
+
+  // Native MapLibre touch gestures need two fingers for both rotate
+  // (twist) and pitch (vertical drag), which is fiddly on a phone. Replace
+  // single-finger drag — normally a plain pan — with a first-person-style
+  // look: horizontal drag turns the view, vertical drag tilts it. Pinch
+  // (two fingers) is left to the native handlers for zoom/rotate.
+  function setupTouchLook() {
+    if (!isTouchDevice) return;
+    map3d.dragPan.disable();
+
+    const container = map3d.getCanvasContainer();
+    const BEARING_SENSITIVITY = 0.25;
+    const PITCH_SENSITIVITY = 0.2;
+    let dragging = false;
+    let activeTouchId = null;
+    let lastX = 0, lastY = 0;
+
+    function pitchBounds() {
+      // Walk mode keeps the same terrain-safety ceiling as the angle
+      // slider, but allows tilting further down (more top-down) than its
+      // floor since that's always safe. 3D browsing mode is unconstrained
+      // up to MapLibre's own maxPitch.
+      return currentView === "walk" ? [20, WALK_PITCH_MAX] : [0, 82];
+    }
+
+    container.addEventListener("touchstart", (e) => {
+      if (!interactionsEnabled || e.touches.length !== 1) { dragging = false; return; }
+      dragging = true;
+      activeTouchId = e.touches[0].identifier;
+      lastX = e.touches[0].clientX;
+      lastY = e.touches[0].clientY;
+    }, { passive: true });
+
+    container.addEventListener("touchmove", (e) => {
+      if (!dragging || !interactionsEnabled) return;
+      const t = Array.from(e.touches).find(t => t.identifier === activeTouchId);
+      if (!t) return;
+      const dx = t.clientX - lastX;
+      const dy = t.clientY - lastY;
+      lastX = t.clientX;
+      lastY = t.clientY;
+      const bearing = map3d.getBearing() - dx * BEARING_SENSITIVITY;
+      const [pMin, pMax] = pitchBounds();
+      const pitch = Math.max(pMin, Math.min(pMax, map3d.getPitch() - dy * PITCH_SENSITIVITY));
+      map3d.jumpTo({ bearing, pitch });
+      e.preventDefault();
+    }, { passive: false });
+
+    function endDrag() { dragging = false; activeTouchId = null; }
+    container.addEventListener("touchend", endDrag, { passive: true });
+    container.addEventListener("touchcancel", endDrag, { passive: true });
   }
 
   function addTrailLayer() {
@@ -289,9 +369,9 @@
     savedExaggeration = currentExaggeration;
     if (map3d.getTerrain()) map3d.setTerrain({ source: "terrain-dem", exaggeration: 1 });
     updateWalkCamera(parseFloat(walkSlider.value) || 0);
-    // Starts paused: leave drag/rotate/zoom enabled so the user can look
-    // around from that spot. They get locked out only while playback is
-    // actively driving the camera (see startWalk/stopWalk).
+    // Starts paused: leave drag/rotate/zoom (native or touch-look) enabled
+    // so the user can look around from that spot. They get locked out only
+    // while playback is actively driving the camera (see startWalk/stopWalk).
   }
 
   function exitWalkMode() {
@@ -306,7 +386,8 @@
   let navControlAdded = true;
 
   function disableInteractions() {
-    map3d.dragPan.disable();
+    interactionsEnabled = false;
+    if (!isTouchDevice) map3d.dragPan.disable();
     map3d.dragRotate.disable();
     map3d.scrollZoom.disable();
     map3d.doubleClickZoom.disable();
@@ -320,7 +401,8 @@
   }
 
   function enableInteractions() {
-    map3d.dragPan.enable();
+    interactionsEnabled = true;
+    if (!isTouchDevice) map3d.dragPan.enable();
     map3d.dragRotate.enable();
     map3d.scrollZoom.enable();
     map3d.doubleClickZoom.enable();

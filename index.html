@@ -14,60 +14,71 @@
       <h1>Kailash Kora</h1>
       <p class="subtitle">The sacred circumambulation of Mount Kailash, Tibet — real trail geometry &amp; topography</p>
     </div>
-    <button type="button" id="info-toggle-btn" class="info-toggle-btn" aria-expanded="false">
-      <span id="info-toggle-label">Show stats &amp; elevation</span><span class="chevron" aria-hidden="true">▾</span>
-    </button>
   </header>
-
-  <div class="stats-bar collapsible-hidden" id="stats-bar"><!-- filled by JS --></div>
 
   <main>
     <section id="map-wrap">
       <div id="map"></div>
       <div id="map3d"></div>
-      <div class="view-toggle" id="view-toggle">
-        <button type="button" class="view-btn active" data-view="2d">2D Map</button>
-        <button type="button" class="view-btn" data-view="3d">3D Terrain</button>
-        <button type="button" class="view-btn" data-view="walk">Walk-through</button>
-        <button type="button" class="reset-btn" id="reset-view-btn" title="Reset to default view" aria-label="Reset view">⟲</button>
-      </div>
-      <div class="exaggeration-control" id="exaggeration-control" hidden>
-        <div class="panel-head">
-          <label for="exaggeration-slider">Vert. exaggeration <span id="exaggeration-val">1.0×</span></label>
-          <button type="button" class="collapse-btn" id="exag-collapse-btn" aria-label="Collapse controls" aria-expanded="true">−</button>
-        </div>
-        <div class="panel-body" id="exag-body">
-          <input type="range" id="exaggeration-slider" min="1" max="3" step="0.1" value="1">
-          <p class="hint">Right-click (or ctrl+) drag to rotate/tilt &middot; scroll to zoom &middot; left-drag to pan</p>
-        </div>
-      </div>
-      <div class="walk-control" id="walk-control" hidden>
-        <div class="panel-head">
-          <span class="panel-readout">
-            <span id="walk-dist-label">0.00 km</span>
-            <span id="walk-place-label"></span>
-          </span>
-          <button type="button" class="collapse-btn" id="walk-collapse-btn" aria-label="Collapse controls" aria-expanded="true">−</button>
-        </div>
-        <div class="panel-body" id="walk-body">
-          <div class="walk-row">
-            <button type="button" id="walk-step-back-btn" class="walk-step-btn" aria-label="Step back" title="Step back">⏮</button>
-            <button type="button" id="walk-play-btn" class="walk-play-btn" aria-label="Play">▶</button>
-            <button type="button" id="walk-step-fwd-btn" class="walk-step-btn" aria-label="Step forward" title="Step forward">⏭</button>
-            <input type="range" id="walk-slider" min="0" max="47" step="0.001" value="0">
-            <select id="walk-speed" aria-label="Playback speed">
-              <option value="0.5">0.5×</option>
-              <option value="1" selected>1×</option>
-              <option value="2">2×</option>
-              <option value="4">4×</option>
-            </select>
+
+      <!-- Single menu button collects everything that isn't needed at a
+           glance, so the map gets the rest of the screen. -->
+      <button type="button" id="menu-btn" class="menu-btn" aria-expanded="false" aria-label="Menu">☰</button>
+
+      <div class="menu-panel" id="menu-panel" hidden>
+        <div class="menu-stats" id="stats-bar"><!-- filled by JS --></div>
+
+        <button type="button" id="chart-toggle-btn" class="menu-row-btn" aria-expanded="false">
+          <span>Elevation chart</span><span class="chevron" aria-hidden="true">▾</span>
+        </button>
+
+        <div class="menu-section">
+          <div class="menu-label">View</div>
+          <div class="view-toggle" id="view-toggle">
+            <button type="button" class="view-btn active" data-view="2d">2D Map</button>
+            <button type="button" class="view-btn" data-view="3d">3D Terrain</button>
+            <button type="button" class="view-btn" data-view="walk">Walk-through</button>
           </div>
+        </div>
+
+        <div class="menu-section" id="menu-exag-section" hidden>
+          <div class="menu-label">Vertical exaggeration <span id="exaggeration-val">1.0×</span></div>
+          <input type="range" id="exaggeration-slider" min="1" max="3" step="0.1" value="1">
+        </div>
+
+        <div class="menu-section" id="menu-walk-section" hidden>
+          <div class="menu-label">Playback speed</div>
+          <select id="walk-speed" aria-label="Playback speed">
+            <option value="0.5">0.5×</option>
+            <option value="1" selected>1×</option>
+            <option value="2">2×</option>
+            <option value="4">4×</option>
+          </select>
+          <div class="menu-label" style="margin-top:10px">View angle</div>
           <div class="walk-angle-row">
             <span class="walk-angle-label">Elevated</span>
             <input type="range" id="walk-angle-slider" min="0" max="100" step="1" value="55" aria-label="View angle, elevated to ground-level">
             <span class="walk-angle-label">Ground-level</span>
           </div>
-          <p class="hint">First-person run-through, on the real terrain &middot; drag the slider or press play</p>
+        </div>
+
+        <p class="hint" id="rotate-hint"></p>
+
+        <button type="button" id="reset-view-btn" class="menu-row-btn">⟲ Reset view</button>
+      </div>
+
+      <!-- Floating walk-through controls: only shown while walk mode is
+           active, and can be tapped away like the menu to see more map. -->
+      <div class="walk-play-bar" id="walk-play-bar" hidden>
+        <div class="walk-readout">
+          <span id="walk-dist-label">0.00 km</span>
+          <span id="walk-place-label"></span>
+        </div>
+        <div class="walk-row">
+          <button type="button" id="walk-step-back-btn" class="walk-step-btn" aria-label="Step back" title="Step back">⏮</button>
+          <button type="button" id="walk-play-btn" class="walk-play-btn" aria-label="Play">▶</button>
+          <button type="button" id="walk-step-fwd-btn" class="walk-step-btn" aria-label="Step forward" title="Step forward">⏭</button>
+          <input type="range" id="walk-slider" min="0" max="47" step="0.001" value="0">
         </div>
       </div>
     </section>
