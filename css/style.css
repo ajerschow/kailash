@@ -65,12 +65,6 @@ a { color: var(--accent-2); }
   letter-spacing: 0.02em;
 }
 
-.subtitle {
-  margin: 2px 0 0;
-  font-size: 0.8rem;
-  color: var(--text-dim);
-}
-
 .collapsible-hidden,
 .tap-hidden {
   display: none !important;
@@ -100,12 +94,10 @@ main {
 #map-wrap.mode-3d #map { visibility: hidden; }
 #map-wrap.mode-3d #map3d { visibility: visible; }
 
-/* ---------- unified menu ---------- */
+/* ---------- unified menu + info popover ---------- */
 
-.menu-btn {
+.icon-btn {
   position: absolute;
-  top: 10px;
-  left: 10px;
   z-index: 600;
   width: 40px;
   height: 40px;
@@ -123,20 +115,15 @@ main {
   justify-content: center;
 }
 
-.menu-btn.active {
+.icon-btn.active {
   background: var(--accent);
   color: #1a1200;
   border-color: var(--accent);
 }
 
-.menu-panel {
+.panel-surface {
   position: absolute;
-  top: 56px;
-  left: 10px;
   z-index: 600;
-  width: 250px;
-  max-width: calc(100% - 20px);
-  max-height: calc(100% - 66px);
   overflow-y: auto;
   background: var(--panel-t);
   backdrop-filter: blur(8px);
@@ -148,6 +135,40 @@ main {
   font-size: 0.78rem;
   color: var(--text-dim);
 }
+
+.menu-btn {
+  top: 10px;
+  right: 10px;
+}
+
+.menu-panel {
+  top: 56px;
+  right: 10px;
+  width: 250px;
+  max-width: calc(100% - 20px);
+  max-height: calc(100% - 66px);
+}
+
+.info-btn {
+  bottom: 10px;
+  right: 10px;
+  font-size: 1rem;
+  font-style: italic;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.info-panel {
+  bottom: 56px;
+  right: 10px;
+  width: 220px;
+  max-width: calc(100% - 20px);
+  max-height: calc(100% - 76px);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.info-panel p { margin: 0 0 8px; }
+.info-panel p:last-child { margin-bottom: 0; }
 
 .menu-stats {
   display: grid;
@@ -487,16 +508,6 @@ input[type="range"] {
   box-shadow: 0 0 6px rgba(0,0,0,0.6);
 }
 
-.app-footer {
-  padding: 8px 22px 10px;
-  background: var(--panel);
-  border-top: 1px solid var(--border);
-  font-size: 0.7rem;
-  color: var(--text-dim);
-}
-
-.app-footer p { margin: 0; }
-
 @media (min-width: 900px) {
   main { flex-direction: row; }
   #map-wrap { flex: 1 1 62%; min-height: unset; }
@@ -514,10 +525,13 @@ input[type="range"] {
    viewport rather than #map-wrap's computed height, which mobile Safari's
    collapsing address bar can make taller than what's currently on screen. */
 @media (max-width: 600px) {
+  /* Left inset stays small; right inset leaves room so the play bar
+     doesn't run under the info button, which shares the bottom-right
+     corner across every view mode. */
   .walk-play-bar {
     position: fixed;
     left: 8px;
-    right: 8px;
+    right: 56px;
     bottom: max(8px, env(safe-area-inset-bottom));
     max-width: none;
   }
@@ -529,13 +543,26 @@ input[type="range"] {
   .menu-btn {
     position: fixed;
     top: max(10px, env(safe-area-inset-top));
-    left: max(10px, env(safe-area-inset-left));
+    right: max(10px, env(safe-area-inset-right));
   }
 
   .menu-panel {
     position: fixed;
     top: calc(max(10px, env(safe-area-inset-top)) + 46px);
-    left: max(10px, env(safe-area-inset-left));
+    right: max(10px, env(safe-area-inset-right));
     max-height: calc(100vh - max(10px, env(safe-area-inset-top)) - 66px);
+  }
+
+  .info-btn {
+    position: fixed;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    right: max(10px, env(safe-area-inset-right));
+  }
+
+  .info-panel {
+    position: fixed;
+    bottom: calc(max(10px, env(safe-area-inset-bottom)) + 46px);
+    right: max(10px, env(safe-area-inset-right));
+    max-height: calc(100vh - max(10px, env(safe-area-inset-bottom)) - 76px);
   }
 }

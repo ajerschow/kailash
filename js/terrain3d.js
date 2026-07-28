@@ -39,6 +39,8 @@
   const wrap = document.getElementById("map-wrap");
   const menuBtn = document.getElementById("menu-btn");
   const menuPanel = document.getElementById("menu-panel");
+  const infoBtn = document.getElementById("info-btn");
+  const infoPanel = document.getElementById("info-panel");
   const toggle = document.getElementById("view-toggle");
   const menuExagSection = document.getElementById("menu-exag-section");
   const exagSlider = document.getElementById("exaggeration-slider");
@@ -60,29 +62,44 @@
     ? "Drag one finger on the map to look around. Pinch to zoom."
     : "Drag to rotate, scroll to zoom.";
 
-  function openMenu() {
-    menuPanel.hidden = false;
-    menuBtn.setAttribute("aria-expanded", "true");
-    menuBtn.classList.add("active");
+  function makePopover(btn, panel) {
+    return {
+      open() {
+        panel.hidden = false;
+        btn.setAttribute("aria-expanded", "true");
+        btn.classList.add("active");
+      },
+      close() {
+        panel.hidden = true;
+        btn.setAttribute("aria-expanded", "false");
+        btn.classList.remove("active");
+      }
+    };
   }
 
-  function closeMenu() {
-    menuPanel.hidden = true;
-    menuBtn.setAttribute("aria-expanded", "false");
-    menuBtn.classList.remove("active");
-  }
+  const menuPopover = makePopover(menuBtn, menuPanel);
+  const infoPopover = makePopover(infoBtn, infoPanel);
 
   menuBtn.addEventListener("click", () => {
-    if (menuPanel.hidden) openMenu(); else closeMenu();
+    infoPopover.close();
+    if (menuPanel.hidden) menuPopover.open(); else menuPopover.close();
   });
 
-  // Tapping anywhere outside the open menu — including the map itself —
+  infoBtn.addEventListener("click", () => {
+    menuPopover.close();
+    if (infoPanel.hidden) infoPopover.open(); else infoPopover.close();
+  });
+
+  // Tapping anywhere outside an open popover — including the map itself —
   // closes it again, so it never lingers over the view once the user has
   // picked what they needed.
   document.addEventListener("click", (e) => {
-    if (menuPanel.hidden) return;
-    if (menuPanel.contains(e.target) || menuBtn.contains(e.target)) return;
-    closeMenu();
+    if (!menuPanel.hidden && !menuPanel.contains(e.target) && !menuBtn.contains(e.target)) {
+      menuPopover.close();
+    }
+    if (!infoPanel.hidden && !infoPanel.contains(e.target) && !infoBtn.contains(e.target)) {
+      infoPopover.close();
+    }
   });
 
   toggle.addEventListener("click", (e) => {
@@ -194,9 +211,13 @@
       attributionControl: false
     });
 
+    // Top-left mirrors Leaflet's layer switcher position in 2D mode (they're
+    // never visible at the same time) — top-right is reserved for the menu
+    // button and bottom-right for the info button, both shared across every
+    // view mode. Attribution lives in the info panel instead of its own
+    // control.
     navControl = new maplibregl.NavigationControl({ visualizePitch: true });
-    map3d.addControl(navControl, "top-right");
-    map3d.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
+    map3d.addControl(navControl, "top-left");
 
     map3d.on("load", () => {
       map3d.setTerrain({ source: "terrain-dem", exaggeration: currentExaggeration });
@@ -410,7 +431,7 @@
     map3d.touchPitch.enable();
     map3d.keyboard.enable();
     if (navControl && !navControlAdded) {
-      map3d.addControl(navControl, "top-right");
+      map3d.addControl(navControl, "top-left");
       navControlAdded = true;
     }
   }

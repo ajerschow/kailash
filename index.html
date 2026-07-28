@@ -12,7 +12,6 @@
   <header class="app-header">
     <div class="title-block">
       <h1>Kailash Kora</h1>
-      <p class="subtitle">The sacred circumambulation of Mount Kailash, Tibet — real trail geometry &amp; topography</p>
     </div>
   </header>
 
@@ -23,9 +22,24 @@
 
       <!-- Single menu button collects everything that isn't needed at a
            glance, so the map gets the rest of the screen. -->
-      <button type="button" id="menu-btn" class="menu-btn" aria-expanded="false" aria-label="Menu">☰</button>
+      <button type="button" id="menu-btn" class="icon-btn menu-btn" aria-expanded="false" aria-label="Menu">☰</button>
 
-      <div class="menu-panel" id="menu-panel" hidden>
+      <!-- Descriptive text and map/data credits live behind this "i" so
+           they don't cost permanent screen space. -->
+      <button type="button" id="info-btn" class="icon-btn info-btn" aria-expanded="false" aria-label="About &amp; map credits">ⓘ</button>
+
+      <div class="info-panel panel-surface" id="info-panel" hidden>
+        <p>The sacred circumambulation of Mount Kailash, Tibet — real trail geometry &amp; topography.</p>
+        <p>
+          Trail geometry: <a href="https://www.openstreetmap.org/relation/1661963" target="_blank" rel="noopener">OpenStreetMap relation 1661963 "Kailash Kora"</a> (community-surveyed outer kora route), © OpenStreetMap contributors, ODbL.
+          Elevation: SRTM 30&nbsp;m via <a href="https://www.opentopodata.org/" target="_blank" rel="noopener">opentopodata.org</a>, lightly smoothed.
+          Map tiles: <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA) / Esri World Imagery.
+          3D terrain: <a href="https://github.com/tilezen/joerd" target="_blank" rel="noopener">Mapzen/Tilezen Joerd</a> elevation tiles (SRTM/ASTER-derived).
+          Mapping via <a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a> and <a href="https://maplibre.org" target="_blank" rel="noopener">MapLibre GL</a>.
+        </p>
+      </div>
+
+      <div class="menu-panel panel-surface" id="menu-panel" hidden>
         <div class="menu-stats" id="stats-bar"><!-- filled by JS --></div>
 
         <button type="button" id="chart-toggle-btn" class="menu-row-btn" aria-expanded="false">
@@ -95,15 +109,6 @@
       <svg id="elevation-chart" preserveAspectRatio="none"></svg>
     </section>
   </main>
-
-  <footer class="app-footer">
-    <p>
-      Trail geometry: <a href="https://www.openstreetmap.org/relation/1661963" target="_blank" rel="noopener">OpenStreetMap relation 1661963 "Kailash Kora"</a> (community-surveyed outer kora route), © OpenStreetMap contributors, ODbL.
-      Elevation: SRTM 30&nbsp;m via <a href="https://www.opentopodata.org/" target="_blank" rel="noopener">opentopodata.org</a>, lightly smoothed.
-      Map tiles: <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA) / Esri World Imagery.
-      3D terrain: <a href="https://github.com/tilezen/joerd" target="_blank" rel="noopener">Mapzen/Tilezen Joerd</a> elevation tiles (SRTM/ASTER-derived), rendered with <a href="https://maplibre.org" target="_blank" rel="noopener">MapLibre GL</a>.
-    </p>
-  </footer>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>

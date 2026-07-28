@@ -80,23 +80,22 @@
     // close the loop visually
     latlngs.push(latlngs[0]);
 
-    // Zoom control moves to bottom-left so the top-left corner stays clear
-    // for the menu button (top-right is already taken by the layer switcher
-    // below, and by MapLibre's nav control when in 3D/walk mode).
-    map = L.map("map", { scrollWheelZoom: true, zoomControl: false });
+    // Zoom control lives bottom-left, layer switcher top-left — top-right is
+    // reserved for the menu button and bottom-right for the info button,
+    // both shared across every view mode. Native attribution is off; the
+    // same credits live in the info panel instead.
+    map = L.map("map", { scrollWheelZoom: true, zoomControl: false, attributionControl: false });
     L.control.zoom({ position: "bottomleft" }).addTo(map);
 
     const topo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
-      maxZoom: 17,
-      attribution: '&copy; OpenStreetMap contributors, SRTM | &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
+      maxZoom: 17
     });
     const satellite = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
-      maxZoom: 17,
-      attribution: "Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics"
+      maxZoom: 17
     });
 
     topo.addTo(map);
-    L.control.layers({ "Topographic": topo, "Satellite": satellite }, {}, { position: "topright" }).addTo(map);
+    L.control.layers({ "Topographic": topo, "Satellite": satellite }, {}, { position: "topleft" }).addTo(map);
 
     mapBounds = L.latLngBounds(latlngs);
 
