@@ -459,6 +459,7 @@ input[type="range"] {
 #readout-dist { color: var(--accent-2); }
 #readout-ele { color: var(--accent); }
 #readout-grade { color: var(--text-dim); }
+#readout-o2 { color: var(--low); }
 
 #elevation-chart {
   width: 100%;

@@ -172,6 +172,17 @@
     return "●";
   }
 
+  // Air stays ~20.9% oxygen by volume at any altitude — what actually
+  // drops is the atmospheric pressure, so there's less of it in each
+  // breath. This is the standard International Standard Atmosphere
+  // barometric formula (valid well past our trail's ~4.6-5.7km range),
+  // expressed as % of sea-level pressure/oxygen availability.
+  function oxygenPercent(eleM) {
+    const P0 = 101325, T0 = 288.15, L = 0.0065, g = 9.80665, M = 0.0289644, R = 8.3144598;
+    const ratio = Math.pow(1 - (L * eleM) / T0, (g * M) / (R * L));
+    return ratio * 100;
+  }
+
   function elevationColor(t) {
     // t in [0,1], low -> green, mid -> amber, high -> red
     t = Math.max(0, Math.min(1, t));
@@ -197,7 +208,7 @@
     const rect = chartEl.getBoundingClientRect();
     const w = Math.max(200, rect.width);
     const h = Math.max(120, rect.height);
-    const padL = 46, padR = 14, padT = 34, padB = 26;
+    const padL = 46, padR = 40, padT = 34, padB = 26;
     chartDims = { w, h, padL, padR, padT, padB };
 
     chartEl.setAttribute("viewBox", `0 0 ${w} ${h}`);
@@ -215,13 +226,18 @@
     chartDims.eMin = eMin;
     chartDims.eMax = eMax;
 
-    // gridlines + y labels (elevation)
+    // gridlines + y labels (elevation on the left, estimated oxygen % —
+    // derived from the same altitude via atmospheric pressure — on the
+    // right, reusing the same gridlines since both are just readings of
+    // the same underlying curve)
     const eStep = niceStep(eMax - eMin, 4);
     for (let e = Math.ceil(eMin / eStep) * eStep; e <= eMax; e += eStep) {
       const y = yScale(e);
       addLine(chartEl, padL, y, w - padR, y, "gridline");
       addText(chartEl, padL - 8, y + 3, `${e}`, "axis-label y-label");
+      addText(chartEl, w - padR + 8, y + 3, `${oxygenPercent(e).toFixed(0)}%`, "axis-label y-label-right");
     }
+    addText(chartEl, w - padR + 8, padT - 12, "O₂", "axis-label y-unit-right");
 
     // x labels (distance)
     const dStep = niceStep(totalDist, 6);
@@ -322,6 +338,8 @@
       .wp-gridline { stroke: var(--accent-2); stroke-width: 1; stroke-dasharray: 2,3; opacity: 0.6; }
       .axis-label { fill: var(--text-dim); font-size: 10px; font-family: var(--font); }
       .y-label { text-anchor: end; }
+      .y-label-right { text-anchor: start; fill: var(--low); }
+      .y-unit-right { text-anchor: start; fill: var(--low); font-style: italic; }
       .x-label { text-anchor: middle; }
       .x-unit { text-anchor: end; font-style: italic; }
       .wp-label { fill: var(--text); font-size: 10px; font-weight: 600; font-family: var(--font); }
@@ -400,6 +418,7 @@
     document.getElementById("readout-dist").textContent = `${p.dist.toFixed(2)} km`;
     document.getElementById("readout-ele").textContent = `${Math.round(p.ele)} m`;
     document.getElementById("readout-grade").textContent = `${grade >= 0 ? "+" : ""}${grade.toFixed(1)}%`;
+    document.getElementById("readout-o2").textContent = `${oxygenPercent(p.ele).toFixed(0)}% O₂`;
   }
 
   function instantGrade(idx) {

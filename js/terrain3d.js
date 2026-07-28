@@ -255,8 +255,8 @@
   // Native MapLibre touch gestures need two fingers for both rotate
   // (twist) and pitch (vertical drag), which is fiddly on a phone. Replace
   // single-finger drag — normally a plain pan — with a first-person-style
-  // look: horizontal drag turns the view, vertical drag tilts it. Pinch
-  // (two fingers) is left to the native handlers for zoom/rotate.
+  // look: horizontal drag turns the view, vertical drag tilts it. Two
+  // fingers still pan/zoom/rotate natively.
   function setupTouchLook() {
     if (!isTouchDevice) return;
     map3d.dragPan.disable();
@@ -276,6 +276,26 @@
       return currentView === "walk" ? [20, WALK_PITCH_MAX] : [0, 82];
     }
 
+    // MapLibre's own drag-pan handler is also bound directly on this same
+    // canvas container, and it only initializes correctly on a touchstart
+    // event where it's already enabled — toggling dragPan from a listener
+    // on the container itself is one event too late, since listeners on
+    // the same element fire in registration order and MapLibre's was
+    // attached first (during map construction). Listening in the capture
+    // phase on `document` — an ancestor — runs before that, so the enabled
+    // state is correct by the time MapLibre's handler sees the same event.
+    // That's what makes two-finger pan (alongside native pinch-zoom and
+    // twist-to-rotate) actually work, while a lone finger still only looks
+    // around.
+    function syncDragPanForTouchCount(e) {
+      if (!interactionsEnabled || !container.contains(e.target)) return;
+      if (e.touches.length >= 2) map3d.dragPan.enable();
+      else map3d.dragPan.disable();
+    }
+    document.addEventListener("touchstart", syncDragPanForTouchCount, { capture: true, passive: true });
+    document.addEventListener("touchend", syncDragPanForTouchCount, { capture: true, passive: true });
+    document.addEventListener("touchcancel", syncDragPanForTouchCount, { capture: true, passive: true });
+
     container.addEventListener("touchstart", (e) => {
       if (!interactionsEnabled || e.touches.length !== 1) { dragging = false; return; }
       dragging = true;
@@ -285,7 +305,7 @@
     }, { passive: true });
 
     container.addEventListener("touchmove", (e) => {
-      if (!dragging || !interactionsEnabled) return;
+      if (!dragging || !interactionsEnabled || e.touches.length !== 1) return;
       const t = Array.from(e.touches).find(t => t.identifier === activeTouchId);
       if (!t) return;
       const dx = t.clientX - lastX;
@@ -415,7 +435,10 @@
 
   function disableInteractions() {
     interactionsEnabled = false;
-    if (!isTouchDevice) map3d.dragPan.disable();
+    // Always off during playback — for touch this overrides whatever the
+    // two-finger sync above last set, in case a multi-touch gesture was
+    // still in progress when play was pressed.
+    map3d.dragPan.disable();
     map3d.dragRotate.disable();
     map3d.scrollZoom.disable();
     map3d.doubleClickZoom.disable();
@@ -430,7 +453,11 @@
 
   function enableInteractions() {
     interactionsEnabled = true;
-    if (!isTouchDevice) map3d.dragPan.enable();
+    // Non-touch: dragPan is the permanent pan gesture, back on immediately.
+    // Touch: back to the single-finger-look default; the two-finger sync
+    // above re-enables it the moment a second finger actually touches down.
+    if (isTouchDevice) map3d.dragPan.disable();
+    else map3d.dragPan.enable();
     map3d.dragRotate.enable();
     map3d.scrollZoom.enable();
     map3d.doubleClickZoom.enable();
