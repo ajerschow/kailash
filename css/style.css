@@ -510,3 +510,40 @@ input[type="range"] {
   }
   #elevation-chart { flex: 1; height: auto; min-height: 260px; }
 }
+
+/* Narrow phones: the centered view-toggle pill collides with the map
+   library's own top-right corner control (Leaflet's layer switcher is up
+   to 58px wide, MapLibre's zoom/compass stack similar) once the viewport
+   gets this tight — shrink and left-align it to clear that corner instead
+   of guessing a single offset that works for both libraries. */
+@media (max-width: 600px) {
+  .view-toggle {
+    left: 6px;
+    transform: none;
+    max-width: calc(100% - 68px);
+  }
+
+  .view-btn {
+    padding: 5px 7px;
+    font-size: 0.68rem;
+  }
+
+  .reset-btn {
+    width: 22px;
+    font-size: 0.85rem;
+  }
+
+  /* Anchor to the actual visible viewport rather than #map-wrap's computed
+     height, which mobile Safari's collapsing address bar can make taller
+     than what's currently on screen — position:fixed tracks the real
+     visible area instead of silently pushing these below the fold. */
+  .exaggeration-control,
+  .walk-control {
+    position: fixed;
+    left: 8px;
+    right: 8px;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    width: auto;
+    max-width: none;
+  }
+}
