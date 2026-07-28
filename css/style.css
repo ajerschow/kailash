@@ -67,7 +67,8 @@ a { color: var(--accent-2); }
   color: var(--text-dim);
 }
 
-.collapsible-hidden {
+.collapsible-hidden,
+.tap-hidden {
   display: none !important;
 }
 

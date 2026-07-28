@@ -82,11 +82,13 @@
       if (view === "3d") {
         wrap.classList.remove("mode-walk");
         exagCtrl.hidden = false;
+        exagCtrl.classList.remove("tap-hidden");
         walkCtrl.hidden = true;
       } else if (view === "walk") {
         wrap.classList.add("mode-walk");
         exagCtrl.hidden = true;
         walkCtrl.hidden = false;
+        walkCtrl.classList.remove("tap-hidden");
         enterWalkMode();
       }
     }
@@ -179,6 +181,16 @@
       mapReady = true;
       walkSlider.max = DATA.stats.total_distance_km.toFixed(2);
       if (pendingWalkEnter) enterWalkMode();
+    });
+
+    // Tap the map to hide the overlay panel and see more of the view; tap
+    // again to bring it back. Skip taps that land on a waypoint marker —
+    // that already has its own popup behavior.
+    map3d.on("click", (e) => {
+      const hits = map3d.queryRenderedFeatures(e.point, { layers: ["kora-waypoints-circle"] });
+      if (hits.length) return;
+      if (currentView === "walk") walkCtrl.classList.toggle("tap-hidden");
+      else if (currentView === "3d") exagCtrl.classList.toggle("tap-hidden");
     });
 
     window.__kora3dMap = map3d;
@@ -345,7 +357,7 @@
     const nextIdx = (idx + dir + n) % n;
     const dist = DATA.trail[nextIdx].dist;
     walkSlider.value = dist;
-    updateWalkCamera(dist);
+    updateWalkCamera(dist, true);
   }
 
   function startWalk() {
@@ -380,7 +392,7 @@
     walkAnimId = requestAnimationFrame(walkTick);
   }
 
-  function updateWalkCamera(distKm) {
+  function updateWalkCamera(distKm, animate) {
     const idx = nearestIndexByDist(distKm);
     const p = DATA.trail[idx];
     const total = DATA.stats.total_distance_km;
@@ -398,7 +410,13 @@
     const angleT = parseFloat(walkAngleSlider.value) / 100;
     const zoom = WALK_ZOOM_MIN + angleT * (WALK_ZOOM_MAX - WALK_ZOOM_MIN);
     const pitch = WALK_PITCH_MIN + angleT * (WALK_PITCH_MAX - WALK_PITCH_MIN);
-    map3d.jumpTo({ center: [p.lon, p.lat], zoom, pitch, bearing });
+    const cameraOpts = { center: [p.lon, p.lat], zoom, pitch, bearing };
+    // Continuous playback and slider drags already update every frame/input
+    // event with tiny deltas — that's smooth on its own, and animating each
+    // one would make the camera lag behind the input. Only the step buttons
+    // jump a whole point at once, so only they get an eased glide.
+    if (animate) map3d.easeTo({ ...cameraOpts, duration: 450, easing: (t) => 1 - Math.pow(1 - t, 3) });
+    else map3d.jumpTo(cameraOpts);
 
     walkDistLabel.textContent = `${p.dist.toFixed(2)} km`;
     walkPlaceLabel.textContent = nearestPlaceLabel(p.dist);
